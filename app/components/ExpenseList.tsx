@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { useApp } from "../context/AppContext";
-import { Expense } from "../types";
 import { formatCurrency } from "../utils/currency";
 
 export default function ExpenseList() {
@@ -66,7 +65,7 @@ export default function ExpenseList() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-lg font-semibold text-red-500">
--{formatCurrency(expense.amount)}
+              -{formatCurrency(expense.amount)}
             </span>
             <button
               onClick={() => deleteExpense(expense.id)}
@@ -80,4 +79,3 @@ export default function ExpenseList() {
     </div>
   );
 }
-

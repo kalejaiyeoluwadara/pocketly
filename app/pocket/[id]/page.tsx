@@ -3,7 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import ExpenseForm from "../../components/ExpenseForm";
-import ExpenseList from "../../components/ExpenseList";
 import { WalletIcon } from "../../icons";
 import { motion } from "framer-motion";
 import { formatCurrency } from "../../utils/currency";

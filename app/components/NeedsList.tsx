@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useApp } from "../context/AppContext";
-import { Need, Priority } from "../types";
+import { Priority } from "../types";
 import { AlertCircleIcon, CircleIcon, CheckCircleIcon } from "../icons";
 import { formatCurrency } from "../utils/currency";
 

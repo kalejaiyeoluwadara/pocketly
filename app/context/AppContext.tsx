@@ -21,34 +21,62 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [pockets, setPockets] = useState<Pocket[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [needs, setNeeds] = useState<Need[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount (client-side only)
   useEffect(() => {
-    const savedPockets = localStorage.getItem("pockets");
-    const savedExpenses = localStorage.getItem("expenses");
-    const savedNeeds = localStorage.getItem("needs");
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const savedPockets = localStorage.getItem("pockets");
+      const savedExpenses = localStorage.getItem("expenses");
+      const savedNeeds = localStorage.getItem("needs");
 
-    if (savedPockets) setPockets(JSON.parse(savedPockets));
-    if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
-    if (savedNeeds) setNeeds(JSON.parse(savedNeeds));
+      if (savedPockets) setPockets(JSON.parse(savedPockets));
+      if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
+      if (savedNeeds) setNeeds(JSON.parse(savedNeeds));
+    } catch (error) {
+      console.error("Error loading data from localStorage:", error);
+      // Clear corrupted data
+      localStorage.removeItem("pockets");
+      localStorage.removeItem("expenses");
+      localStorage.removeItem("needs");
+    } finally {
+      setIsLoaded(true);
+    }
   }, []);
 
-  // Save to localStorage whenever state changes
+  // Save to localStorage whenever state changes (client-side only)
   useEffect(() => {
-    localStorage.setItem("pockets", JSON.stringify(pockets));
-  }, [pockets]);
+    if (!isLoaded || typeof window === 'undefined') return;
+    try {
+      localStorage.setItem("pockets", JSON.stringify(pockets));
+    } catch (error) {
+      console.error("Error saving pockets to localStorage:", error);
+    }
+  }, [pockets, isLoaded]);
 
   useEffect(() => {
-    localStorage.setItem("expenses", JSON.stringify(expenses));
-  }, [expenses]);
+    if (!isLoaded || typeof window === 'undefined') return;
+    try {
+      localStorage.setItem("expenses", JSON.stringify(expenses));
+    } catch (error) {
+      console.error("Error saving expenses to localStorage:", error);
+    }
+  }, [expenses, isLoaded]);
 
   useEffect(() => {
-    localStorage.setItem("needs", JSON.stringify(needs));
-  }, [needs]);
+    if (!isLoaded || typeof window === 'undefined') return;
+    try {
+      localStorage.setItem("needs", JSON.stringify(needs));
+    } catch (error) {
+      console.error("Error saving needs to localStorage:", error);
+    }
+  }, [needs, isLoaded]);
 
   const addPocket = (name: string, initialBalance: number) => {
     const newPocket: Pocket = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name,
       balance: initialBalance,
       createdAt: new Date().toISOString(),
@@ -58,7 +86,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addExpense = (pocketId: string, amount: number, description: string) => {
     const newExpense: Expense = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       pocketId,
       amount,
       description,
@@ -78,7 +106,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addNeed = (title: string, amount: number, priority: "high" | "medium" | "low") => {
     const newNeed: Need = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       title,
       amount,
       priority,

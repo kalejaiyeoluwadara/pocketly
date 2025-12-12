@@ -12,6 +12,17 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Pocketly - Expense Tracker",
   description: "Track your expenses and manage your pockets",
+  manifest: "/manifest.json",
+  themeColor: "#18181b",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Pocketly",
+  },
+  icons: {
+    icon: "/icon-192x192.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

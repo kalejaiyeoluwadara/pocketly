@@ -50,7 +50,7 @@ export default function LogoutModal({
             </div>
 
             <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
-              Are you sure you want to sign out? You'll need to sign in again to
+              Are you sure you want to sign out? You&apos;ll need to sign in again to
               access your account.
             </p>
 

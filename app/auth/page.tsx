@@ -225,7 +225,7 @@ export default function AuthPage() {
         </div>
 
         <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Don't have an account? Sign in with your email and password to create
+          Don&apos;t have an account? Sign in with your email and password to create
           one automatically.
         </p>
       </motion.div>

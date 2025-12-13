@@ -3,8 +3,9 @@
 import { useParams, useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import ExpenseForm from "../../components/ExpenseForm";
+import IncomeForm from "../../components/IncomeForm";
 import EmptyState from "../../components/EmptyState";
-import { WalletIcon, FileTextIcon } from "../../icons";
+import { WalletIcon, FileTextIcon, TrendingUpIcon } from "../../icons";
 import { motion } from "framer-motion";
 import { formatCurrency } from "../../utils/currency";
 import moment from "moment";
@@ -13,7 +14,7 @@ import {  ChevronLeftIcon } from "lucide-react";
 export default function PocketDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { pockets, expenses, deletePocket } = useApp();
+  const { pockets, expenses, income, deletePocket } = useApp();
   const pocket = pockets.find((p) => p.id === params.id);
 
   if (!pocket) {
@@ -27,7 +28,9 @@ export default function PocketDetailPage() {
   }
 
   const pocketExpenses = expenses.filter((e) => e.pocketId === pocket.id);
+  const pocketIncome = income.filter((i) => i.pocketId === pocket.id);
   const totalSpent = pocketExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalIncome = pocketIncome.reduce((sum, i) => sum + i.amount, 0);
 
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this pocket?")) {
@@ -81,13 +84,24 @@ export default function PocketDetailPage() {
               >
                 {formatCurrency(pocket.balance)}
               </p>
-              <section className="mt-2">
-                <ExpenseForm defaultPocketId={pocket.id} />
+              <section className="mt-2 flex gap-2">
+                <div className="flex-1">
+                  <ExpenseForm defaultPocketId={pocket.id} />
+                </div>
+                <div className="flex-1">
+                  <IncomeForm defaultPocketId={pocket.id} />
+                </div>
               </section>
             </div>
 
             <div className=" ">
               <p className="mb-2 text-xs text-right font-medium text-zinc-500 dark:text-zinc-400">
+                Total Income
+              </p>
+              <p className="text-xl font-medium text-emerald-500 text-right">
+                {formatCurrency(totalIncome)}
+              </p>
+              <p className="mb-2 mt-4 text-xs text-right font-medium text-zinc-500 dark:text-zinc-400">
                 Total Spent
               </p>
               <p className="text-xl font-medium text-red-500 text-right">
@@ -99,9 +113,9 @@ export default function PocketDetailPage() {
 
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-50">
-            Expenses{" "}
+            Transactions{" "}
             <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              ({pocketExpenses.length})
+              ({pocketExpenses.length + pocketIncome.length})
             </span>
           </h2>
           <motion.button
@@ -114,36 +128,60 @@ export default function PocketDetailPage() {
           </motion.button>
         </div>
 
-        {pocketExpenses.length === 0 ? (
+        {pocketExpenses.length === 0 && pocketIncome.length === 0 ? (
           <EmptyState
             icon={FileTextIcon}
-            iconColor="red"
-            title="No expenses yet"
-            description="Start tracking expenses for this pocket!"
+            iconColor="zinc"
+            title="No transactions yet"
+            description="Start tracking expenses and income for this pocket!"
           />
         ) : (
           <div className="space-y-3">
-            {pocketExpenses.map((expense, index) => (
-              <motion.div
-                key={expense.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="flex items-center justify-between rounded-xl border border-zinc-200/50 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md dark:border-zinc-800/50 dark:bg-zinc-900"
-              >
-                <div className="flex-1">
-                  <p className="font-medium text-zinc-900 dark:text-zinc-50">
-                    {expense.description}
-                  </p>
-                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                    {moment(expense.createdAt).format("MMM D, YYYY")}
-                  </p>
-                </div>
-                <span className="text-lg font-medium text-red-500">
-                  - {formatCurrency(expense.amount)}
-                </span>
-              </motion.div>
-            ))}
+            {/* Combine and sort expenses and income by date */}
+            {[...pocketExpenses.map(e => ({ ...e, type: 'expense' as const })), ...pocketIncome.map(i => ({ ...i, type: 'income' as const }))]
+              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .map((transaction, index) => (
+                <motion.div
+                  key={`${transaction.type}-${transaction.id}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={`flex items-center justify-between rounded-xl border p-4 shadow-sm transition-all duration-200 hover:shadow-md ${
+                    transaction.type === 'income'
+                      ? 'border-emerald-200/50 bg-emerald-50/50 dark:border-emerald-800/50 dark:bg-emerald-900/20'
+                      : 'border-zinc-200/50 bg-white dark:border-zinc-800/50 dark:bg-zinc-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 flex-1">
+                    {transaction.type === 'income' ? (
+                      <div className="rounded-lg bg-emerald-500 p-2">
+                        <TrendingUpIcon size={16} className="text-white" />
+                      </div>
+                    ) : (
+                      <div className="rounded-lg bg-red-500 p-2">
+                        <FileTextIcon size={16} className="text-white" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                        {transaction.description}
+                      </p>
+                      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                        {moment(transaction.createdAt).format("MMM D, YYYY")}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className={`text-lg font-medium ${
+                      transaction.type === 'income'
+                        ? "text-emerald-500"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount)}
+                  </span>
+                </motion.div>
+              ))}
           </div>
         )}
       </div>

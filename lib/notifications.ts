@@ -10,6 +10,7 @@ interface CreateNotificationParams {
   metadata?: {
     pocketId?: string;
     expenseId?: string;
+    incomeId?: string;
     needId?: string;
     amount?: number;
     [key: string]: any;

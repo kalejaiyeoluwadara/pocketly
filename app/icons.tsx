@@ -6,6 +6,7 @@ import {
   Target,
   Home,
   TrendingDown,
+  TrendingUp,
   CheckCircle2,
   Circle,
   AlertCircle,
@@ -19,6 +20,9 @@ export const TargetIcon = (props: LucideProps) => <Target {...props} />;
 export const HomeIcon = (props: LucideProps) => <Home {...props} />;
 export const TrendingDownIcon = (props: LucideProps) => (
   <TrendingDown {...props} />
+);
+export const TrendingUpIcon = (props: LucideProps) => (
+  <TrendingUp {...props} />
 );
 export const CheckCircleIcon = (props: LucideProps) => (
   <CheckCircle2 {...props} />

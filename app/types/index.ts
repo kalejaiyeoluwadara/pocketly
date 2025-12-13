@@ -7,6 +7,9 @@ export type NotificationType =
   | "expense_created"
   | "expense_updated"
   | "expense_deleted"
+  | "income_created"
+  | "income_updated"
+  | "income_deleted"
   | "need_created"
   | "need_updated"
   | "need_deleted";
@@ -20,6 +23,15 @@ export interface Pocket {
 }
 
 export interface Expense {
+  id: string;
+  pocketId: string;
+  amount: number;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Income {
   id: string;
   pocketId: string;
   amount: number;
@@ -46,6 +58,7 @@ export interface Notification {
   metadata?: {
     pocketId?: string;
     expenseId?: string;
+    incomeId?: string;
     needId?: string;
     amount?: number;
     [key: string]: any;

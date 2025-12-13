@@ -4,9 +4,13 @@ export type NotificationType =
   | "pocket_created"
   | "pocket_deleted"
   | "pocket_balance_negative"
+  | "pocket_balance_positive"
   | "expense_created"
   | "expense_updated"
   | "expense_deleted"
+  | "income_created"
+  | "income_updated"
+  | "income_deleted"
   | "need_created"
   | "need_updated"
   | "need_deleted";
@@ -20,6 +24,7 @@ export interface INotification extends mongoose.Document {
   metadata?: {
     pocketId?: string;
     expenseId?: string;
+    incomeId?: string;
     needId?: string;
     amount?: number;
     [key: string]: any;
@@ -43,9 +48,13 @@ const NotificationSchema = new Schema<INotification>(
         "pocket_created",
         "pocket_deleted",
         "pocket_balance_negative",
+        "pocket_balance_positive",
         "expense_created",
         "expense_updated",
         "expense_deleted",
+        "income_created",
+        "income_updated",
+        "income_deleted",
         "need_created",
         "need_updated",
         "need_deleted",

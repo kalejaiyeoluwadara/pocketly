@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import moment from "moment";
 import { WalletIcon } from "../icons";
 import { Pocket } from "../types";
 import { formatCurrency } from "../utils/currency";
@@ -51,33 +52,35 @@ export default function PocketCard({ pocket }: PocketCardProps) {
         {/* Colored accent bar */}
         <div className={`absolute left-0 top-0 h-full w-1 ${colors.bg}`} />
 
-        <div className="flex items-start justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div
-              className={`relative rounded-xl ${colors.bg} p-3 shadow-lg transition-transform duration-300 group-hover:scale-110`}
+              className={`relative rounded-md ${colors.bg} p-2 transition-transform duration-300 group-hover:scale-110`}
             >
-              <WalletIcon size={22} className="text-white" />
+              <WalletIcon size={14} className="text-white" />
             </div>
             <div>
-              <h3 className="mb-1 text-lg font-medium text-zinc-900 dark:text-zinc-50">
+              <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-50">
                 {pocket.name}
               </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                {new Date(pocket.createdAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                {moment(pocket.createdAt).format("MMM D, YYYY")}
               </p>
             </div>
           </div>
           <div className="text-right">
             <p
-              className={`text-lg font-medium flex items-center  transition-colors ${
+              className={`text-sm font-medium flex items-center  transition-colors ${
                 isNegative ? "text-red-500" : "text-zinc-900 dark:text-zinc-50"
               }`}
             >
-              <span className="text-[12px] mt-[3px] mr-1">₦</span> <span>{pocket.balance.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="text-[11px] mt-[2px] mr-1">₦</span>{" "}
+              <span>
+                {pocket.balance.toLocaleString("en-NG", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
               <ChevronRightIcon
                 size={16}
                 className="text-zinc-500   ml-1 dark:text-zinc-400"

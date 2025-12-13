@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import moment from "moment";
 import { useApp } from "../context/AppContext";
 import { Priority } from "../types";
 import EmptyState from "./EmptyState";
@@ -77,7 +78,7 @@ export default function NeedsList() {
                     {config.label}
                   </span>
                   <span>•</span>
-                  <span>{new Date(need.createdAt).toLocaleDateString()}</span>
+                  <span>{moment(need.createdAt).format("MMM D, YYYY")}</span>
                 </div>
               </div>
             </div>

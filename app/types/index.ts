@@ -5,6 +5,7 @@ export interface Pocket {
   name: string;
   balance: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface Expense {
@@ -13,6 +14,7 @@ export interface Expense {
   amount: number;
   description: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface Need {
@@ -21,5 +23,6 @@ export interface Need {
   amount: number;
   priority: Priority;
   createdAt: string;
+  updatedAt: string;
 }
 

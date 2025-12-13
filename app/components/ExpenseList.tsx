@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import moment from "moment";
 import { useApp } from "../context/AppContext";
 import EmptyState from "./EmptyState";
 import { PlusIcon } from "../icons";
@@ -41,7 +42,7 @@ export default function ExpenseList() {
             <div className="mt-1 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
               <span>{getPocketName(expense.pocketId)}</span>
               <span>•</span>
-              <span>{new Date(expense.createdAt).toLocaleDateString()}</span>
+              <span>{moment(expense.createdAt).format("MMM D, YYYY")}</span>
             </div>
           </div>
           <div className="flex items-center gap-3">

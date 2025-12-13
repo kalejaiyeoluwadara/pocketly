@@ -45,7 +45,7 @@ export default function ExpenseList() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-lg font-semibold text-red-500">
+            <span className="text-lg font-medium text-red-500">
               -{formatCurrency(expense.amount)}
             </span>
             <button

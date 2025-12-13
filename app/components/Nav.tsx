@@ -47,7 +47,7 @@ function Nav() {
             >
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b border-zinc-200/50 p-4 dark:border-zinc-800/50">
-                  <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+                  <h2 className="text-xl font-medium text-zinc-900 dark:text-zinc-50">
                     Notifications
                   </h2>
                   <button

@@ -53,7 +53,7 @@ export default function EmptyState({
       >
         <Icon className={`h-8 w-8 ${colorClasses.text}`} />
       </div>
-      <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+      <h3 className="mb-2 text-lg font-medium text-zinc-900 dark:text-zinc-50">
         {title}
       </h3>
       <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>

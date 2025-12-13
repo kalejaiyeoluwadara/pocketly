@@ -4,10 +4,18 @@ import { motion } from "framer-motion";
 import { useApp } from "../context/AppContext";
 import { Priority } from "../types";
 import EmptyState from "./EmptyState";
-import { AlertCircleIcon, CircleIcon, CheckCircleIcon, PlusIcon } from "../icons";
+import {
+  AlertCircleIcon,
+  CircleIcon,
+  CheckCircleIcon,
+  PlusIcon,
+} from "../icons";
 import { formatCurrency } from "../utils/currency";
 
-const priorityConfig: Record<Priority, { label: string; color: string; icon: typeof AlertCircleIcon }> = {
+const priorityConfig: Record<
+  Priority,
+  { label: string; color: string; icon: typeof AlertCircleIcon }
+> = {
   high: {
     label: "High",
     color: "text-red-500",
@@ -74,8 +82,8 @@ export default function NeedsList() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-{formatCurrency(need.amount)}
+              <span className="text-lg font-medium text-zinc-900 dark:text-zinc-50">
+                {formatCurrency(need.amount)}
               </span>
               <button
                 onClick={() => deleteNeed(need.id)}
@@ -90,4 +98,3 @@ export default function NeedsList() {
     </div>
   );
 }
-

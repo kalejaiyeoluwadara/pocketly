@@ -32,7 +32,10 @@ export default function NeedForm() {
         onClick={() => setIsOpen(true)}
         className="group relative py-2 px-2 flex w-full items-center justify-center gap-1 rounded-full bg-white"
       >
-        <PlusIcon size={10} className="transition-transform text-black duration-300 group-hover:rotate-90" />
+        <PlusIcon
+          size={10}
+          className="transition-transform text-black duration-300 group-hover:rotate-90"
+        />
         <p className="text-xs font-medium text-black ">Add Need</p>
       </motion.button>
 
@@ -56,7 +59,7 @@ export default function NeedForm() {
                 <div className="rounded-xl bg-amber-600 p-2 dark:bg-amber-500">
                   <PlusIcon size={20} className="text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-50">
                   New Need
                 </h2>
               </div>
@@ -110,7 +113,7 @@ export default function NeedForm() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-semibold text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-medium text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
                   >
                     Cancel
                   </motion.button>
@@ -118,7 +121,7 @@ export default function NeedForm() {
                     type="submit"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex-1 rounded-xl bg-amber-600 py-3 font-semibold text-white shadow-lg shadow-amber-500/25 transition-all duration-200 hover:bg-amber-700 hover:shadow-xl hover:shadow-amber-500/40 dark:bg-amber-500 dark:hover:bg-amber-600"
+                    className="flex-1 rounded-xl bg-amber-600 py-3 font-medium text-white shadow-lg shadow-amber-500/25 transition-all duration-200 hover:bg-amber-700 hover:shadow-xl hover:shadow-amber-500/40 dark:bg-amber-500 dark:hover:bg-amber-600"
                   >
                     Add
                   </motion.button>
@@ -131,4 +134,3 @@ export default function NeedForm() {
     </>
   );
 }
-

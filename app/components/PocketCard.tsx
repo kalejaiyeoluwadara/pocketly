@@ -59,7 +59,7 @@ export default function PocketCard({ pocket }: PocketCardProps) {
               <WalletIcon size={22} className="text-white" />
             </div>
             <div>
-              <h3 className="mb-1 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+              <h3 className="mb-1 text-lg font-medium text-zinc-900 dark:text-zinc-50">
                 {pocket.name}
               </h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">

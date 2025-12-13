@@ -27,7 +27,8 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const finalPocketId = pocketId || (pockets.length === 1 ? pockets[0].id : "");
+    const finalPocketId =
+      pocketId || (pockets.length === 1 ? pockets[0].id : "");
     if (!finalPocketId || !amount || !description) return;
 
     addExpense(finalPocketId, parseFloat(amount), description);
@@ -53,7 +54,10 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
         onClick={() => setIsOpen(true)}
         className="group relative py-2 px-2 flex w-full items-center justify-center gap-1 rounded-full bg-white"
       >
-        <PlusIcon size={10} className="transition-transform text-black duration-300 group-hover:rotate-90" />
+        <PlusIcon
+          size={10}
+          className="transition-transform text-black duration-300 group-hover:rotate-90"
+        />
         <p className="text-xs font-medium text-black ">Add Expense</p>
       </motion.button>
 
@@ -77,7 +81,7 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
                 <div className="rounded-xl bg-red-600 p-2 dark:bg-red-500">
                   <PlusIcon size={20} className="text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-50">
                   New Expense
                 </h2>
               </div>
@@ -104,7 +108,8 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
                 )}
                 {defaultPocketId && (
                   <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-400">
-                    Pocket: {pockets.find((p) => p.id === defaultPocketId)?.name}
+                    Pocket:{" "}
+                    {pockets.find((p) => p.id === defaultPocketId)?.name}
                   </div>
                 )}
                 <div>
@@ -141,7 +146,7 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-semibold text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-medium text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
                   >
                     Cancel
                   </motion.button>
@@ -149,7 +154,7 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
                     type="submit"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex-1 rounded-xl bg-red-600 py-3 font-semibold text-white shadow-lg shadow-red-500/25 transition-all duration-200 hover:bg-red-700 hover:shadow-xl hover:shadow-red-500/40 dark:bg-red-500 dark:hover:bg-red-600"
+                    className="flex-1 rounded-xl bg-red-600 py-3 font-medium text-white shadow-lg shadow-red-500/25 transition-all duration-200 hover:bg-red-700 hover:shadow-xl hover:shadow-red-500/40 dark:bg-red-500 dark:hover:bg-red-600"
                   >
                     Add
                   </motion.button>
@@ -162,4 +167,3 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
     </>
   );
 }
-

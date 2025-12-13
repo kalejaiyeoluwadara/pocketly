@@ -47,23 +47,23 @@ export default function PocketCard({ pocket }: PocketCardProps) {
       <motion.div
         whileHover={{ scale: 1.02, y: -2 }}
         whileTap={{ scale: 0.98 }}
-        className="group relative overflow-hidden rounded-2xl border border-zinc-200/50 bg-white p-5 shadow-elevated transition-all duration-300 hover:shadow-elevated-lg dark:border-zinc-800/50 dark:bg-zinc-900"
+        className="group relative overflow-hidden rounded-xl border border-zinc-200/50 bg-white p-3 shadow-elevated transition-all duration-300 hover:shadow-elevated-lg dark:border-zinc-800/50 dark:bg-zinc-900"
       >
         {/* Colored accent bar */} 
         <div className={`absolute left-0 top-0 h-full w-1 ${colors.bg}`} />
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <div
               className={`relative rounded-md ${colors.bg} p-2 transition-transform duration-300 group-hover:scale-110`}
             >
               <WalletIcon size={14} className="text-white" />
             </div>
             <div>
-              <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+              <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
                 {pocket.name}
               </h3>
-              <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+              <p className="text-[6px] text-zinc-500 dark:text-zinc-400">
                 {moment(pocket.createdAt).format("MMM D, YYYY")}
               </p>
             </div>

@@ -55,15 +55,15 @@ export default function PocketDetailPage() {
         </motion.button>
 
         <div className="mb-8">
-          <div className="mb-6 flex items-center gap-4">
-            <div className="rounded-xl bg-indigo-600 p-3 shadow-lg dark:bg-indigo-500">
+          <div className="mb-6 flex items-center gap-2">
+            <div className="rounded-xl bg-indigo-600 p-2 shadow-lg dark:bg-indigo-500">
               <WalletIcon size={24} className="text-white" />
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-50">
+              <h1 className="text-xl font-medium text-zinc-900 dark:text-zinc-50">
                 {pocket.name}
               </h1>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-[9px] text-zinc-500 dark:text-zinc-400">
                 Created{" "}
                 {moment(pocket.createdAt).format("MMM D, YYYY")}
               </p>
@@ -71,7 +71,7 @@ export default function PocketDetailPage() {
           </div>
 
           <div className="grid grid-cols-3 gap-1 border border-zinc-200/50 bg-white p-5 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900 rounded-2xl">
-            <div className="col-span-2 md:col-span-1 ">
+            <div className="col-span-2 ">
               <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 Current Balance
               </p>

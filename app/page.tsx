@@ -7,18 +7,20 @@ import PocketCard from "./components/PocketCard";
 import PocketForm from "./components/PocketForm";
 import EmptyState from "./components/EmptyState";
 import BottomNav from "./components/BottomNav";
+import LoadingModal from "./components/LoadingModal";
 import { formatCurrency } from "./utils/currency";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { PlusIcon } from "./icons";
 import Nav from "./components/Nav";
 
 export default function Home() {
-  const { pockets } = useApp();
+  const { pockets, isLoading } = useApp();
   const totalBalance = pockets.reduce((sum, pocket) => sum + pocket.balance, 0);
   const [showBalance, setShowBalance] = useState(false);
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
+      <LoadingModal isOpen={isLoading} />
       <Nav />
       <div className="mx-auto max-w-md px-4 py-6">
         <div className="mb-8">
@@ -63,7 +65,7 @@ export default function Home() {
               description="Create your first pocket to start tracking your finances!"
             />
           ) : (
-            <section className="flex flex-col gap-4">
+            <section className="flex flex-col gap-2">
               {pockets.map((pocket) => (
                 <PocketCard key={pocket.id} pocket={pocket} />
               ))}

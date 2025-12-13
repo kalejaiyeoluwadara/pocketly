@@ -47,7 +47,7 @@ function Nav() {
 
   return (
     <>
-      <nav className="flex items-center gap-2 justify-between px-4 py-b pt-4">
+      <nav className="flex max-w-md mx-auto items-center gap-2 justify-between px-4 py-b pt-4">
         <section className="flex items-center gap-2">
           <div className="h-10 w-10 bg-gray-500 flex items-center justify-center rounded-full">
             {session?.user?.image ? (

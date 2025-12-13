@@ -27,13 +27,13 @@ export default function PocketForm() {
         whileHover={{ scale: 1.02, y: -1 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(true)}
-        className="group relative flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/40 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+        className="group relative py-2 px-2 flex w-full items-center justify-center gap-1 rounded-full bg-white"
       >
         <PlusIcon
-          size={20}
-          className="transition-transform duration-300 group-hover:rotate-90"
+          size={10}
+          className="transition-transform text-black duration-300 group-hover:rotate-90"
         />
-        Create Pocket
+        <p className="text-xs font-medium text-black ">Create Pocket</p>
       </motion.button>
 
       <AnimatePresence>

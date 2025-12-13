@@ -13,12 +13,24 @@ interface PocketCardProps {
 // Generate a color based on pocket name for consistency
 const getColorClasses = (name: string) => {
   const colors = [
-    { bg: "bg-indigo-500", text: "text-indigo-500", border: "border-indigo-500" },
+    {
+      bg: "bg-indigo-500",
+      text: "text-indigo-500",
+      border: "border-indigo-500",
+    },
     { bg: "bg-blue-500", text: "text-blue-500", border: "border-blue-500" },
-    { bg: "bg-emerald-500", text: "text-emerald-500", border: "border-emerald-500" },
+    {
+      bg: "bg-emerald-500",
+      text: "text-emerald-500",
+      border: "border-emerald-500",
+    },
     { bg: "bg-amber-500", text: "text-amber-500", border: "border-amber-500" },
     { bg: "bg-pink-500", text: "text-pink-500", border: "border-pink-500" },
-    { bg: "bg-violet-500", text: "text-violet-500", border: "border-violet-500" },
+    {
+      bg: "bg-violet-500",
+      text: "text-violet-500",
+      border: "border-violet-500",
+    },
   ];
   const index = name.charCodeAt(0) % colors.length;
   return colors[index];
@@ -37,10 +49,12 @@ export default function PocketCard({ pocket }: PocketCardProps) {
       >
         {/* Colored accent bar */}
         <div className={`absolute left-0 top-0 h-full w-1 ${colors.bg}`} />
-        
+
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className={`relative rounded-xl ${colors.bg} p-3 shadow-lg transition-transform duration-300 group-hover:scale-110`}>
+            <div
+              className={`relative rounded-xl ${colors.bg} p-3 shadow-lg transition-transform duration-300 group-hover:scale-110`}
+            >
               <WalletIcon size={22} className="text-white" />
             </div>
             <div>
@@ -58,10 +72,8 @@ export default function PocketCard({ pocket }: PocketCardProps) {
           </div>
           <div className="text-right">
             <p
-              className={`text-2xl font-bold transition-colors ${
-                isNegative
-                  ? "text-red-500"
-                  : "text-zinc-900 dark:text-zinc-50"
+              className={`text-lg font-medium transition-colors ${
+                isNegative ? "text-red-500" : "text-zinc-900 dark:text-zinc-50"
               }`}
             >
               {formatCurrency(pocket.balance)}
@@ -77,4 +89,3 @@ export default function PocketCard({ pocket }: PocketCardProps) {
     </Link>
   );
 }
-

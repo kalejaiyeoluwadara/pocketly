@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Trash2, Check } from "lucide-react";
+import { X, Trash2, Check, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { Notification } from "../types";
@@ -157,7 +157,7 @@ export default function NotificationsPanel({
                 {isLoading ? (
                   <div className="flex items-center justify-center p-6">
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      Loading...
+                      <Loader2 size={20} className="text-zinc-600 dark:text-zinc-400 animate-spin" />
                     </p>
                   </div>
                 ) : notifications.length === 0 ? (

@@ -12,7 +12,7 @@ export default function ExpensesPage() {
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
   return (
-    <div className="min-h-screen fixed bg-zinc-50 pb-20 dark:bg-black">
+    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
       <Nav />
       <div className="mx-auto max-w-md px-4 pt-3 pb-6">
         <div className="mb-6">

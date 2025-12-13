@@ -36,7 +36,7 @@ export default function Home() {
                 </button>
               </p>
               <p className="text-2xl font-medium text-zinc-900 dark:text-zinc-50">
-                {showBalance ? formatCurrency(totalBalance) : "****"}
+                {showBalance ? formatCurrency(totalBalance,"7px") : "****"}
               </p>
             </section>
             <section className="flex justify-end items-center">
@@ -54,7 +54,7 @@ export default function Home() {
               description="Create your first pocket to start tracking your finances!"
             />
           ) : (
-            <section className="space-y-4">
+            <section className="flex flex-col gap-4">
               {pockets.map((pocket) => (
                 <PocketCard key={pocket.id} pocket={pocket} />
               ))}

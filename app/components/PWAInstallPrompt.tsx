@@ -47,7 +47,10 @@ export default function PWAInstallPrompt() {
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
     };
   }, []);
 
@@ -56,11 +59,11 @@ export default function PWAInstallPrompt() {
       // Show the install prompt for Android/Chrome
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      
+
       if (outcome === "accepted") {
         setShowPrompt(false);
       }
-      
+
       setDeferredPrompt(null);
     }
   };
@@ -107,7 +110,8 @@ export default function PWAInstallPrompt() {
             </div>
 
             <p className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
-              Install Pocketly on your device for a better experience and quick access.
+              Install Pocketly on your device for a better experience and quick
+              access.
             </p>
 
             {isIOS ? (
@@ -121,19 +125,26 @@ export default function PWAInstallPrompt() {
                       <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
                         1
                       </span>
-                      <span>Tap the <strong>Share</strong> button at the bottom</span>
+                      <span>
+                        Tap the <strong>Share</strong> button at the bottom
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
                         2
                       </span>
-                      <span>Scroll down and tap <strong>"Add to Home Screen"</strong></span>
+                      <span>
+                        Scroll down and tap{" "}
+                        <strong>&quot;Add to Home Screen&quot;</strong>
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
                         3
                       </span>
-                      <span>Tap <strong>"Add"</strong> to confirm</span>
+                      <span>
+                        Tap <strong>&quot;Add&quot;</strong> to confirm
+                      </span>
                     </li>
                   </ol>
                 </div>
@@ -172,19 +183,27 @@ export default function PWAInstallPrompt() {
                         <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
                           1
                         </span>
-                        <span>Tap the <strong>menu</strong> (three dots) in the top right</span>
+                        <span>
+                          Tap the <strong>menu</strong> (three dots) in the top
+                          right
+                        </span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
                           2
                         </span>
-                        <span>Select <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></span>
+                        <span>
+                          Select <strong>&quot;Add to Home screen&quot;</strong>{" "}
+                          or <strong>&quot;Install app&quot;</strong>
+                        </span>
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
                           3
                         </span>
-                        <span>Tap <strong>"Install"</strong> to confirm</span>
+                        <span>
+                          Tap <strong>&quot;Install&quot;</strong> to confirm
+                        </span>
                       </li>
                     </ol>
                   </div>
@@ -197,4 +216,3 @@ export default function PWAInstallPrompt() {
     </AnimatePresence>
   );
 }
-

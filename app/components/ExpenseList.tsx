@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useApp } from "../context/AppContext";
+import EmptyState from "./EmptyState";
+import { PlusIcon } from "../icons";
 import { formatCurrency } from "../utils/currency";
 
 export default function ExpenseList() {
@@ -13,33 +15,12 @@ export default function ExpenseList() {
 
   if (expenses.length === 0) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border-2 border-dashed border-zinc-300 bg-white p-12 text-center dark:border-zinc-700 dark:bg-zinc-900"
-      >
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-          <svg
-            className="h-8 w-8 text-red-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-        </div>
-        <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          No expenses yet
-        </h3>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          Start tracking your spending by adding your first expense!
-        </p>
-      </motion.div>
+      <EmptyState
+        icon={PlusIcon}
+        iconColor="red"
+        title="No expenses yet"
+        description="Start tracking your spending by adding your first expense!"
+      />
     );
   }
 

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { WalletIcon } from "../icons";
 import { Pocket } from "../types";
 import { formatCurrency } from "../utils/currency";
+import { ChevronRightIcon } from "lucide-react";
 
 interface PocketCardProps {
   pocket: Pocket;
@@ -72,17 +73,16 @@ export default function PocketCard({ pocket }: PocketCardProps) {
           </div>
           <div className="text-right">
             <p
-              className={`text-lg font-medium transition-colors ${
+              className={`text-lg font-medium flex items-end  transition-colors ${
                 isNegative ? "text-red-500" : "text-zinc-900 dark:text-zinc-50"
               }`}
             >
-              {formatCurrency(pocket.balance)}
+              {formatCurrency(pocket.balance)}{" "}
+              <ChevronRightIcon
+                size={16}
+                className="text-zinc-500  mb-2 ml-1 dark:text-zinc-400"
+              />
             </p>
-            {!isNegative && (
-              <p className="mt-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                Available
-              </p>
-            )}
           </div>
         </div>
       </motion.div>

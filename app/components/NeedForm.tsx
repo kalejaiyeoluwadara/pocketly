@@ -30,10 +30,10 @@ export default function NeedForm() {
         whileHover={{ scale: 1.02, y: -1 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(true)}
-        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-amber-600 py-3.5 font-semibold text-white shadow-lg shadow-amber-500/25 transition-all duration-300 hover:bg-amber-700 hover:shadow-xl hover:shadow-amber-500/40 dark:bg-amber-500 dark:hover:bg-amber-600"
+        className="group relative py-2 px-2 flex w-full items-center justify-center gap-1 rounded-full bg-white"
       >
-        <PlusIcon size={20} className="transition-transform duration-300 group-hover:rotate-90" />
-        Add Need
+        <PlusIcon size={10} className="transition-transform text-black duration-300 group-hover:rotate-90" />
+        <p className="text-xs font-medium text-black ">Add Need</p>
       </motion.button>
 
       <AnimatePresence>

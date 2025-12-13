@@ -3,9 +3,12 @@
 import { useParams, useRouter } from "next/navigation";
 import { useApp } from "../../context/AppContext";
 import ExpenseForm from "../../components/ExpenseForm";
-import { WalletIcon } from "../../icons";
+import EmptyState from "../../components/EmptyState";
+import { WalletIcon, FileTextIcon } from "../../icons";
 import { motion } from "framer-motion";
 import { formatCurrency } from "../../utils/currency";
+import moment from "moment";
+import {  ChevronLeftIcon } from "lucide-react";
 
 export default function PocketDetailPage() {
   const params = useParams();
@@ -42,20 +45,10 @@ export default function PocketDetailPage() {
           onClick={() => router.back()}
           className="mb-6 flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          Back
+          <ChevronLeftIcon
+            size={30}
+            className="text-zinc-500 dark:text-zinc-400"
+          />
         </motion.button>
 
         <div className="mb-8">
@@ -64,27 +57,23 @@ export default function PocketDetailPage() {
               <WalletIcon size={24} className="text-white" />
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+              <h1 className="text-3xl font-medium text-zinc-900 dark:text-zinc-50">
                 {pocket.name}
               </h1>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                 Created{" "}
-                {new Date(pocket.createdAt).toLocaleDateString("en-US", {
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {moment(pocket.createdAt).format("MMM D, YYYY")}
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-zinc-200/50 bg-white p-5 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
+          <div className="grid grid-cols-2 gap-4 border border-zinc-200/50 bg-white p-5 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900 rounded-2xl">
+            <div className=" ">
               <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 Current Balance
               </p>
               <p
-                className={`text-2xl font-bold ${
+                className={`text-xl font-medium ${
                   pocket.balance < 0
                     ? "text-red-500"
                     : "text-zinc-900 dark:text-zinc-50"
@@ -92,26 +81,28 @@ export default function PocketDetailPage() {
               >
                 {formatCurrency(pocket.balance)}
               </p>
+              <section className="mt-2">
+                <ExpenseForm defaultPocketId={pocket.id} />
+              </section>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200/50 bg-white p-5 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
-              <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <div className=" ">
+              <p className="mb-2 text-xs text-right font-medium text-zinc-500 dark:text-zinc-400">
                 Total Spent
               </p>
-              <p className="text-2xl font-bold text-red-500">
+              <p className="text-xl font-medium text-red-500 text-right">
                 {formatCurrency(totalSpent)}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="mb-4">
-          <ExpenseForm defaultPocketId={pocket.id} />
-        </div>
-
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
-            Expenses ({pocketExpenses.length})
+          <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-50">
+            Expenses{" "}
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              ({pocketExpenses.length})
+            </span>
           </h2>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -119,38 +110,17 @@ export default function PocketDetailPage() {
             onClick={handleDelete}
             className="rounded-lg px-3 py-1.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
           >
-            Delete
+            Delete Pocket
           </motion.button>
         </div>
 
         {pocketExpenses.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl border-2 border-dashed border-zinc-300 bg-white p-12 text-center dark:border-zinc-700 dark:bg-zinc-900"
-          >
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-              <svg
-                className="h-8 w-8 text-red-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-              No expenses yet
-            </h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Start tracking expenses for this pocket!
-            </p>
-          </motion.div>
+          <EmptyState
+            icon={FileTextIcon}
+            iconColor="red"
+            title="No expenses yet"
+            description="Start tracking expenses for this pocket!"
+          />
         ) : (
           <div className="space-y-3">
             {pocketExpenses.map((expense, index) => (
@@ -166,11 +136,11 @@ export default function PocketDetailPage() {
                     {expense.description}
                   </p>
                   <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                    {new Date(expense.createdAt).toLocaleDateString()}
+                    {moment(expense.createdAt).format("MMM D, YYYY")}
                   </p>
                 </div>
-                <span className="text-lg font-semibold text-red-500">
-                  -{formatCurrency(expense.amount)}
+                <span className="text-lg font-medium text-red-500">
+                  - {formatCurrency(expense.amount)}
                 </span>
               </motion.div>
             ))}

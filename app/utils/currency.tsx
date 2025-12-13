@@ -3,13 +3,13 @@
  * @param amount - The amount to format
  * @returns JSX element with ₦ symbol in smaller font (e.g., "₦1,234.56")
  */
-export function formatCurrency(amount: number): JSX.Element {
+export function formatCurrency(amount: number, fontSize: string = "14px"): JSX.Element {
   const formattedAmount = amount
     .toFixed(2)
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return (
     <>
-      <span className="text-[14px] mr-1">₦</span>
+      <span className={`text-[${fontSize}] mr-1`}>₦</span>
       {formattedAmount}
     </>
   );

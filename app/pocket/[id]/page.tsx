@@ -5,7 +5,7 @@ import { useApp } from "../../context/AppContext";
 import ExpenseForm from "../../components/ExpenseForm";
 import IncomeForm from "../../components/IncomeForm";
 import EmptyState from "../../components/EmptyState";
-import { WalletIcon, FileTextIcon, TrendingUpIcon } from "../../icons";
+import { WalletIcon, FileTextIcon, TrendingUpIcon, TrendingDownIcon } from "../../icons";
 import { motion } from "framer-motion";
 import { formatCurrency } from "../../utils/currency";
 import moment from "moment";
@@ -70,13 +70,13 @@ export default function PocketDetailPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 border border-zinc-200/50 bg-white p-5 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900 rounded-2xl">
-            <div className=" ">
+          <div className="grid grid-cols-3 gap-1 border border-zinc-200/50 bg-white p-5 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900 rounded-2xl">
+            <div className="col-span-2 md:col-span-1 ">
               <p className="mb-2 text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 Current Balance
               </p>
               <p
-                className={`text-xl font-medium ${
+                className={`text-lg font-medium ${
                   pocket.balance < 0
                     ? "text-red-500"
                     : "text-zinc-900 dark:text-zinc-50"
@@ -95,17 +95,17 @@ export default function PocketDetailPage() {
             </div>
 
             <div className=" ">
-              <p className="mb-2 text-xs text-right font-medium text-zinc-500 dark:text-zinc-400">
+              <p className="mb-2 text-sm text-right font-medium text-zinc-500 dark:text-zinc-400">
                 Total Income
               </p>
-              <p className="text-xl font-medium text-emerald-500 text-right">
-                {formatCurrency(totalIncome)}
+              <p className="text-xs font-medium text-emerald-500 text-right">
+                {formatCurrency(totalIncome, "6px")}
               </p>
               <p className="mb-2 mt-4 text-xs text-right font-medium text-zinc-500 dark:text-zinc-400">
                 Total Spent
               </p>
-              <p className="text-xl font-medium text-red-500 text-right">
-                {formatCurrency(totalSpent)}
+              <p className="text-xs font-medium text-red-500 text-right">
+                {formatCurrency(totalSpent, "6px")}
               </p>
             </div>
           </div>
@@ -158,8 +158,8 @@ export default function PocketDetailPage() {
                         <TrendingUpIcon size={16} className="text-white" />
                       </div>
                     ) : (
-                      <div className="rounded-lg bg-red-500 p-2">
-                        <FileTextIcon size={16} className="text-white" />
+                      <div className="rounded-lg bg-red-600 p-2">
+                        <TrendingDownIcon size={16} className="text-white" />
                       </div>
                     )}
                     <div className="flex-1">
@@ -172,13 +172,13 @@ export default function PocketDetailPage() {
                     </div>
                   </div>
                   <span
-                    className={`text-lg font-medium ${
+                    className={`text-xs font-medium ${
                       transaction.type === 'income'
-                        ? "text-emerald-500"
-                        : "text-red-500"
+                        ? "text-emerald-600"
+                        : "text-red-600"
                     }`}
                   >
-                    {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount)}
+                    {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount, "6px")}
                   </span>
                 </motion.div>
               ))}

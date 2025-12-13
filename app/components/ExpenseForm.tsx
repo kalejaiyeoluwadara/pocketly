@@ -52,13 +52,13 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
         whileHover={{ scale: 1.02, y: -1 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(true)}
-        className="group relative py-2 px-2 flex w-full items-center justify-center gap-1 rounded-full bg-white"
+        className="group relative py-2 px-1 flex w-full items-center justify-center gap-1 rounded-full bg-white"
       >
         <PlusIcon
           size={10}
           className="transition-transform text-black duration-300 group-hover:rotate-90"
         />
-        <p className="text-xs font-medium text-black ">Add Expense</p>
+        <p className="text-[10px] font-medium text-black ">Add Expense</p>
       </motion.button>
 
       <AnimatePresence>

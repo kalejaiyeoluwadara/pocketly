@@ -8,6 +8,7 @@ import {
   unauthorizedResponse,
   validateRequest,
 } from "@/lib/api-helpers";
+import { createNotification, formatCurrencyForNotification } from "@/lib/notifications";
 
 // GET /api/needs - Get all needs for authenticated user
 export async function GET() {
@@ -76,6 +77,18 @@ export async function POST(request: NextRequest) {
       amount: body.amount,
       priority: body.priority,
       userId: new mongoose.Types.ObjectId(user.id),
+    });
+
+    // Create notification for need creation
+    await createNotification({
+      userId: user.id,
+      type: "need_created",
+      title: "Need Added",
+      message: `You added a new need: "${need.title}" (${need.priority} priority) - ${formatCurrencyForNotification(need.amount)}`,
+      metadata: {
+        needId: need._id.toString(),
+        amount: need.amount,
+      },
     });
 
     return NextResponse.json(

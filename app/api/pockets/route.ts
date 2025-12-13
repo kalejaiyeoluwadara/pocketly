@@ -8,6 +8,7 @@ import {
   unauthorizedResponse,
   validateRequest,
 } from "@/lib/api-helpers";
+import { createNotification, formatCurrencyForNotification } from "@/lib/notifications";
 
 // GET /api/pockets - Get all pockets for authenticated user
 export async function GET() {
@@ -60,6 +61,18 @@ export async function POST(request: NextRequest) {
       name: body.name,
       balance: body.balance || 0,
       userId: new mongoose.Types.ObjectId(user.id),
+    });
+
+    // Create notification for pocket creation
+    await createNotification({
+      userId: user.id,
+      type: "pocket_created",
+      title: "Pocket Created",
+      message: `You created a new pocket "${pocket.name}" with balance ${formatCurrencyForNotification(pocket.balance)}`,
+      metadata: {
+        pocketId: pocket._id.toString(),
+        amount: pocket.balance,
+      },
     });
 
     return NextResponse.json(

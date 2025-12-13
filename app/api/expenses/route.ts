@@ -10,6 +10,7 @@ import {
   validateRequest,
   notFoundResponse,
 } from "@/lib/api-helpers";
+import { createNotification, formatCurrencyForNotification } from "@/lib/notifications";
 
 // GET /api/expenses - Get all expenses for authenticated user (optional pocketId filter)
 export async function GET(request: NextRequest) {
@@ -119,11 +120,39 @@ export async function POST(request: NextRequest) {
     );
 
     // Update pocket balance
+    const oldBalance = pocket.balance;
     pocket.balance -= body.amount;
     await pocket.save({ session });
 
     await session.commitTransaction();
     session.endSession();
+
+    // Create notification for expense creation
+    await createNotification({
+      userId: user.id,
+      type: "expense_created",
+      title: "Expense Recorded",
+      message: `You recorded an expense of ${formatCurrencyForNotification(body.amount)} for "${body.description}" in "${pocket.name}"`,
+      metadata: {
+        pocketId: expense[0].pocketId.toString(),
+        expenseId: expense[0]._id.toString(),
+        amount: body.amount,
+      },
+    });
+
+    // Create notification if balance goes negative
+    if (pocket.balance < 0 && oldBalance >= 0) {
+      await createNotification({
+        userId: user.id,
+        type: "pocket_balance_negative",
+        title: "Low Balance Alert",
+        message: `Your pocket "${pocket.name}" balance is now negative: ${formatCurrencyForNotification(pocket.balance)}`,
+        metadata: {
+          pocketId: expense[0].pocketId.toString(),
+          amount: pocket.balance,
+        },
+      });
+    }
 
     return NextResponse.json(
       {

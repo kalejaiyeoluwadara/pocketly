@@ -10,6 +10,10 @@ import {
   notFoundResponse,
   validateRequest,
 } from "@/lib/api-helpers";
+import {
+  createNotification,
+  formatCurrencyForNotification,
+} from "@/lib/notifications";
 
 // GET /api/expenses/[id] - Get single expense
 export async function GET(
@@ -113,6 +117,7 @@ export async function PUT(
 
     // Update pocket balance
     const pocket = await Pocket.findById(expense.pocketId).session(session);
+    const oldBalance = pocket?.balance || 0;
     if (pocket) {
       pocket.balance -= amountDifference;
       await pocket.save({ session });
@@ -120,6 +125,41 @@ export async function PUT(
 
     await session.commitTransaction();
     session.endSession();
+
+    // Create notification for expense update
+    if (pocket) {
+      await createNotification({
+        userId: user.id,
+        type: "expense_updated",
+        title: "Expense Updated",
+        message: `You updated an expense to ${formatCurrencyForNotification(
+          newAmount
+        )} for "${body.description}" in "${pocket.name}"`,
+        metadata: {
+          pocketId: expense.pocketId.toString(),
+          expenseId: expense._id.toString(),
+          amount: newAmount,
+        },
+      });
+
+      // Create notification if balance goes negative
+      if (pocket.balance < 0 && oldBalance >= 0) {
+        await createNotification({
+          userId: user.id,
+          type: "pocket_balance_negative",
+          title: "Low Balance Alert",
+          message: `Your pocket "${
+            pocket.name
+          }" balance is now negative: ${formatCurrencyForNotification(
+            pocket.balance
+          )}`,
+          metadata: {
+            pocketId: expense.pocketId.toString(),
+            amount: pocket.balance,
+          },
+        });
+      }
+    }
 
     return NextResponse.json({
       id: expense._id.toString(),
@@ -178,11 +218,30 @@ export async function DELETE(
       await pocket.save({ session });
     }
 
+    const expenseDescription = expense.description;
+    const expenseAmount = expense.amount;
+    const pocketName = pocket?.name || "Unknown";
+
     // Delete expense
     await Expense.deleteOne({ _id: params.id }, { session });
 
     await session.commitTransaction();
     session.endSession();
+
+    // Create notification for expense deletion
+    await createNotification({
+      userId: user.id,
+      type: "expense_deleted",
+      title: "Expense Deleted",
+      message: `You deleted an expense of ${formatCurrencyForNotification(
+        expenseAmount
+      )} for "${expenseDescription}" from "${pocketName}"`,
+      metadata: {
+        pocketId: expense.pocketId.toString(),
+        expenseId: params.id,
+        amount: expenseAmount,
+      },
+    });
 
     return NextResponse.json({ message: "Expense deleted successfully" });
   } catch (error) {

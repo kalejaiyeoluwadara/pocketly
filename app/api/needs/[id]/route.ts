@@ -9,6 +9,7 @@ import {
   notFoundResponse,
   validateRequest,
 } from "@/lib/api-helpers";
+import { createNotification, formatCurrencyForNotification } from "@/lib/notifications";
 
 // GET /api/needs/[id] - Get single need
 export async function GET(
@@ -104,6 +105,18 @@ export async function PUT(
 
     await need.save();
 
+    // Create notification for need update
+    await createNotification({
+      userId: user.id,
+      type: "need_updated",
+      title: "Need Updated",
+      message: `You updated a need: "${need.title}" (${need.priority} priority) - ${formatCurrencyForNotification(need.amount)}`,
+      metadata: {
+        needId: need._id.toString(),
+        amount: need.amount,
+      },
+    });
+
     return NextResponse.json({
       id: need._id.toString(),
       title: need.title,
@@ -143,7 +156,22 @@ export async function DELETE(
       return notFoundResponse("Need");
     }
 
+    const needTitle = need.title;
+    const needAmount = need.amount;
+
     await Need.deleteOne({ _id: params.id });
+
+    // Create notification for need deletion
+    await createNotification({
+      userId: user.id,
+      type: "need_deleted",
+      title: "Need Deleted",
+      message: `You deleted a need: "${needTitle}" - ${formatCurrencyForNotification(needAmount)}`,
+      metadata: {
+        needId: params.id,
+        amount: needAmount,
+      },
+    });
 
     return NextResponse.json({ message: "Need deleted successfully" });
   } catch (error) {

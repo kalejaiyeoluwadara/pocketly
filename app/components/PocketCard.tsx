@@ -49,7 +49,7 @@ export default function PocketCard({ pocket }: PocketCardProps) {
         whileTap={{ scale: 0.98 }}
         className="group relative overflow-hidden rounded-2xl border border-zinc-200/50 bg-white p-5 shadow-elevated transition-all duration-300 hover:shadow-elevated-lg dark:border-zinc-800/50 dark:bg-zinc-900"
       >
-        {/* Colored accent bar */}
+        {/* Colored accent bar */} 
         <div className={`absolute left-0 top-0 h-full w-1 ${colors.bg}`} />
 
         <div className="flex items-center justify-between">

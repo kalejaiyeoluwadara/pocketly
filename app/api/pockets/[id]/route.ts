@@ -11,6 +11,7 @@ import {
   notFoundResponse,
   validateRequest,
 } from "@/lib/api-helpers";
+import { createNotification, formatCurrencyForNotification } from "@/lib/notifications";
 
 // GET /api/pockets/[id] - Get single pocket
 export async function GET(
@@ -85,12 +86,27 @@ export async function PUT(
       return notFoundResponse("Pocket");
     }
 
+    const oldBalance = pocket.balance;
     pocket.name = body.name;
     if (body.balance !== undefined) {
       pocket.balance = body.balance;
     }
 
     await pocket.save();
+
+    // Create notification if balance goes negative
+    if (pocket.balance < 0 && oldBalance >= 0) {
+      await createNotification({
+        userId: user.id,
+        type: "pocket_balance_negative",
+        title: "Low Balance Alert",
+        message: `Your pocket "${pocket.name}" balance is now negative: ${formatCurrencyForNotification(pocket.balance)}`,
+        metadata: {
+          pocketId: pocket._id.toString(),
+          amount: pocket.balance,
+        },
+      });
+    }
 
     return NextResponse.json({
       id: pocket._id.toString(),
@@ -130,6 +146,8 @@ export async function DELETE(
       return notFoundResponse("Pocket");
     }
 
+    const pocketName = pocket.name;
+
     // Use transaction to ensure atomicity
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -151,6 +169,17 @@ export async function DELETE(
     } finally {
       session.endSession();
     }
+
+    // Create notification for pocket deletion
+    await createNotification({
+      userId: user.id,
+      type: "pocket_deleted",
+      title: "Pocket Deleted",
+      message: `You deleted the pocket "${pocketName}"`,
+      metadata: {
+        pocketId: params.id,
+      },
+    });
 
     return NextResponse.json({ message: "Pocket deleted successfully" });
   } catch (error) {

@@ -10,6 +10,7 @@ import BottomNav from "./components/BottomNav";
 import { formatCurrency } from "./utils/currency";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { PlusIcon } from "./icons";
+import Nav from "./components/Nav";
 
 export default function Home() {
   const { pockets } = useApp();
@@ -18,14 +19,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
+      <Nav />
       <div className="mx-auto max-w-md px-4 py-6">
-        <div className="mb-8">
-          <nav className="flex items-center mb-4 gap-2 justify-start">
-            <div className="h-10 w-10 bg-gray-500 rounded-full"></div>
-            <p className="text-md font-medium text-zinc-900 dark:text-zinc-50">
-              Hi, <span className="capitalize">OLUWADARA</span>
-            </p>
-          </nav>
+        <div className="mb-8">         
           <div className="rounded-2xl flex justify-between border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
             <section>
               <p className="mb-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 flex items-center">

@@ -21,7 +21,7 @@ export default function Home() {
     <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
       <Nav />
       <div className="mx-auto max-w-md px-4 py-6">
-        <div className="mb-8">         
+        <div className="mb-8">
           <div className="rounded-2xl flex justify-between border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
             <section>
               <p className="mb-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 flex items-center">
@@ -35,8 +35,17 @@ export default function Home() {
                   {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
                 </button>
               </p>
-              <p className="text-2xl font-medium text-zinc-900 dark:text-zinc-50">
-                {showBalance ? formatCurrency(totalBalance,"7px") : "****"}
+              <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                {showBalance ? (
+                  <span className="text-2xl">
+                    <span className="text-lg mr-[2px]">₦</span>
+                    {totalBalance
+                      .toFixed(2)
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </span>
+                ) : (
+                  <span className="text-2xl">****</span>
+                )}
               </p>
             </section>
             <section className="flex justify-end items-center">

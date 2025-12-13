@@ -9,7 +9,10 @@ import Nav from "../components/Nav";
 
 export default function ExpensesPage() {
   const { expenses } = useApp();
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const totalExpenses = expenses.reduce(
+    (sum, expense) => sum + expense.amount,
+    0
+  );
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
@@ -20,8 +23,11 @@ export default function ExpensesPage() {
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
               Total Spent
             </p>
-            <p className="text-2xl font-medium text-red-500">
-              {formatCurrency(totalExpenses)}
+            <p className="font-medium text-red-500">
+              <span className="text-2xl">
+                <span className="text-lg mr-[2px]">₦</span>
+                {totalExpenses.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              </span>
             </p>
             <div className="mt-4  flex items-start justify-start">
               <ExpenseForm />
@@ -35,4 +41,3 @@ export default function ExpensesPage() {
     </div>
   );
 }
-

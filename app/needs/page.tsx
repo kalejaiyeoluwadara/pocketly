@@ -20,8 +20,11 @@ export default function NeedsPage() {
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
               Total Needed
             </p>
-            <p className="text-2xl font-medium text-zinc-900 dark:text-zinc-50">
-              {formatCurrency(totalNeeds)}
+            <p className="font-medium text-zinc-900 dark:text-zinc-50">
+              <span className="text-2xl">
+                <span className="text-lg mr-[2px]">₦</span>
+                {totalNeeds.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              </span>
             </p>
             <div className="mt-2 flex items-start justify-start">
               <NeedForm />

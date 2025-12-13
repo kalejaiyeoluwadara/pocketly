@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "./context/AppContext";
-
+import { Providers } from "./providers";
+import { Analytics } from "@vercel/analytics/next";
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
@@ -33,9 +34,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>
-        <AppProvider>
-          {children}
-        </AppProvider>
+        <Providers>
+          <AppProvider>
+            {children}
+          </AppProvider>
+        </Providers>
+        <Analytics />
       </body>
     </html>
   );

@@ -73,14 +73,14 @@ export default function PocketCard({ pocket }: PocketCardProps) {
           </div>
           <div className="text-right">
             <p
-              className={`text-lg font-medium flex items-end  transition-colors ${
+              className={`text-lg font-medium flex items-center  transition-colors ${
                 isNegative ? "text-red-500" : "text-zinc-900 dark:text-zinc-50"
               }`}
             >
-              {formatCurrency(pocket.balance)}{" "}
+              <span className="text-[12px] mt-[3px] mr-1">₦</span> <span>{pocket.balance.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               <ChevronRightIcon
                 size={16}
-                className="text-zinc-500  mb-2 ml-1 dark:text-zinc-400"
+                className="text-zinc-500   ml-1 dark:text-zinc-400"
               />
             </p>
           </div>

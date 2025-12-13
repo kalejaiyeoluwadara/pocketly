@@ -3,25 +3,27 @@ import { NextResponse } from 'next/server';
 
 export default withAuth(
   function middleware(req) {
-    // Add any route-specific middleware logic here if needed
     return NextResponse.next();
   },
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Allow access to API routes for authentication
-        if (req.nextUrl.pathname.startsWith('/api/auth')) {
+        // Allow access to auth page and API routes
+        if (req.nextUrl.pathname.startsWith('/api/auth') || req.nextUrl.pathname.startsWith('/auth')) {
           return true;
         }
 
-        // Allow all other routes (modify this based on your protection needs)
-        return true;
+        // Require authentication for all other routes
+        return !!token;
       },
+    },
+    pages: {
+      signIn: '/auth',
     },
   }
 );
 
 export const config = {
-  matcher: ['/api/:path*'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 };
 

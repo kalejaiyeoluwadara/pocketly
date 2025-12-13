@@ -3,27 +3,57 @@
 import React, { useState } from "react";
 import { LogOut, Bell, User2Icon, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession, signOut } from "next-auth/react";
+import LogoutModal from "./LogoutModal";
 
 function Nav() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const { data: session } = useSession();
+
+  const handleSignOutClick = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const handleConfirmSignOut = async () => {
+    await signOut({ callbackUrl: "/auth" });
+  };
+
+  const userName =
+    session?.user?.name || session?.user?.email?.split("@")[0] || "User";
 
   return (
     <>
       <nav className="flex items-center gap-2 justify-between px-4 py-b pt-4">
         <section className="flex items-center gap-2">
           <div className="h-10 w-10 bg-gray-500 flex items-center justify-center rounded-full">
-            <User2Icon size={20} className="text-white" />
+            {session?.user?.image ? (
+              <img
+                src={session.user.image}
+                alt={userName}
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            ) : (
+              <User2Icon size={20} className="text-white" />
+            )}
           </div>
           <p className="text-md font-medium text-zinc-900 dark:text-zinc-50">
-            Hi, <span className="capitalize">OLUWADARA</span>
+            Hi, <span className="uppercase">{userName.split(" ")[0].slice(0, 10)}</span>
           </p>
         </section>
         <section className="flex items-center gap-2">
           <button
             onClick={() => setIsNotificationsOpen(true)}
-            className="h-10 w-10 flex items-center justify-center rounded-full"
+            className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
-            <Bell size={20} className="text-white" />
+            <Bell size={20} className="text-zinc-900 dark:text-zinc-50" />
+          </button>
+          <button
+            onClick={handleSignOutClick}
+            className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            title="Sign out"
+          >
+            <LogOut size={20} className="text-zinc-900 dark:text-zinc-50" />
           </button>
         </section>
       </nav>
@@ -43,7 +73,7 @@ function Nav() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 z-[60] w-full max-w-sm border-l border-zinc-200/50 bg-white/95 backdrop-blur-xl shadow-elevated-lg dark:border-zinc-800/50 dark:bg-zinc-900/95"
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm border-l border-zinc-200/50 bg-white/95 backdrop-blur-xl shadow-elevated-lg dark:border-zinc-800/50 dark:bg-zinc-900/95"
             >
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b border-zinc-200/50 p-4 dark:border-zinc-800/50">
@@ -67,6 +97,12 @@ function Nav() {
           </>
         )}
       </AnimatePresence>
+
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleConfirmSignOut}
+      />
     </>
   );
 }

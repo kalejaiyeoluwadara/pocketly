@@ -12,6 +12,7 @@ import { formatCurrency } from "./utils/currency";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { PlusIcon } from "./icons";
 import Nav from "./components/Nav";
+import ContributionGraph from "./components/ContributionGraph";
 
 export default function Home() {
   const { pockets, isLoading } = useApp();
@@ -71,6 +72,11 @@ export default function Home() {
               ))}
             </section>
           )}
+        </div>
+
+        {/* Activity Graph */}
+        <div className="mt-8">
+          <ContributionGraph />
         </div>
       </div>
       <BottomNav />

@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppProvider } from "./context/AppContext";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Providers>
           <AppProvider>
             {children}
+            <PWAInstallPrompt />
           </AppProvider>
         </Providers>
         <Analytics />

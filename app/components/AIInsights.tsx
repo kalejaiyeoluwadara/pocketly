@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { BrainIcon, Loader2Icon, TrendingUpIcon, TrendingDownIcon, AlertCircleIcon } from "../icons";
 import { formatCurrency } from "../utils/currency";
 import EmptyState from "./EmptyState";
@@ -226,7 +228,11 @@ export default function AIInsights() {
                 className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300"
               >
                 <span className="mt-1 text-blue-600 dark:text-blue-400">•</span>
-                <span>{insight}</span>
+                <div className="flex-1 markdown-content">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {insight}
+                  </ReactMarkdown>
+                </div>
               </motion.li>
             ))}
           </ul>
@@ -254,7 +260,11 @@ export default function AIInsights() {
                 className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300"
               >
                 <span className="mt-1 text-green-600 dark:text-green-400">•</span>
-                <span>{recommendation}</span>
+                <div className="flex-1 markdown-content">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {recommendation}
+                  </ReactMarkdown>
+                </div>
               </motion.li>
             ))}
           </ul>
@@ -282,12 +292,16 @@ export default function AIInsights() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.55 + index * 0.05 }}
-                className="text-sm text-zinc-700 dark:text-zinc-300"
+                className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300"
               >
                 <span className="font-medium text-amber-600 dark:text-amber-400">
                   {anomaly.severity === "high" ? "⚠️ High" : anomaly.severity === "medium" ? "⚡ Medium" : "ℹ️ Low"}:
-                </span>{" "}
-                {anomaly.description}
+                </span>
+                <div className="flex-1 prose prose-sm dark:prose-invert prose-p:my-0 prose-p:leading-relaxed">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {anomaly.description}
+                  </ReactMarkdown>
+                </div>
               </motion.li>
             ))}
           </ul>

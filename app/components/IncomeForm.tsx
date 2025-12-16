@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusIcon } from "../icons";
+import { PlusIcon, Loader2Icon } from "../icons";
 import { useApp } from "../context/AppContext";
 import { formatCurrency } from "../utils/currency";
+import { toast } from "sonner";
 
 interface IncomeFormProps {
   defaultPocketId?: string;
@@ -16,6 +17,7 @@ export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
   const [pocketId, setPocketId] = useState(defaultPocketId || "");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (defaultPocketId) {
@@ -25,17 +27,27 @@ export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
     }
   }, [defaultPocketId, pockets]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalPocketId =
       pocketId || (pockets.length === 1 ? pockets[0].id : "");
     if (!finalPocketId || !amount || !description) return;
 
-    addIncome(finalPocketId, parseFloat(amount), description);
-    setPocketId(defaultPocketId || (pockets.length === 1 ? pockets[0].id : ""));
-    setAmount("");
-    setDescription("");
-    setIsOpen(false);
+    setIsLoading(true);
+    try {
+      await addIncome(finalPocketId, parseFloat(amount), description);
+      toast.success("Income added successfully!");
+      setPocketId(defaultPocketId || (pockets.length === 1 ? pockets[0].id : ""));
+      setAmount("");
+      setDescription("");
+      setIsOpen(false);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add income"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (pockets.length === 0) {
@@ -143,20 +155,29 @@ export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
                 <div className="flex gap-3 pt-2">
                   <motion.button
                     type="button"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    disabled={isLoading}
+                    whileHover={!isLoading ? { scale: 1.02 } : {}}
+                    whileTap={!isLoading ? { scale: 0.98 } : {}}
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-medium text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-medium text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
                   >
                     Cancel
                   </motion.button>
                   <motion.button
                     type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 rounded-xl bg-emerald-600 py-3 font-medium text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:bg-emerald-700 hover:shadow-xl hover:shadow-emerald-500/40 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+                    disabled={isLoading}
+                    whileHover={!isLoading ? { scale: 1.02 } : {}}
+                    whileTap={!isLoading ? { scale: 0.98 } : {}}
+                    className="flex-1 rounded-xl bg-emerald-600 py-3 font-medium text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:bg-emerald-700 hover:shadow-xl hover:shadow-emerald-500/40 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-emerald-500 dark:hover:bg-emerald-600"
                   >
-                    Add
+                    {isLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2Icon size={18} className="animate-spin" />
+                        Adding...
+                      </span>
+                    ) : (
+                      "Add"
+                    )}
                   </motion.button>
                 </div>
               </form>

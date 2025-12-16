@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusIcon } from "../icons";
+import { PlusIcon, Loader2Icon } from "../icons";
 import { useApp } from "../context/AppContext";
 import { Priority } from "../types";
+import { toast } from "sonner";
 
 export default function NeedForm() {
   const { addNeed } = useApp();
@@ -12,16 +13,27 @@ export default function NeedForm() {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !amount) return;
 
-    addNeed(title, parseFloat(amount), priority);
-    setTitle("");
-    setAmount("");
-    setPriority("medium");
-    setIsOpen(false);
+    setIsLoading(true);
+    try {
+      await addNeed(title, parseFloat(amount), priority);
+      toast.success("Need added successfully!");
+      setTitle("");
+      setAmount("");
+      setPriority("medium");
+      setIsOpen(false);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add need"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -110,20 +122,29 @@ export default function NeedForm() {
                 <div className="flex gap-3 pt-2">
                   <motion.button
                     type="button"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    disabled={isLoading}
+                    whileHover={!isLoading ? { scale: 1.02 } : {}}
+                    whileTap={!isLoading ? { scale: 0.98 } : {}}
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-medium text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-medium text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
                   >
                     Cancel
                   </motion.button>
                   <motion.button
                     type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 rounded-xl bg-amber-600 py-3 font-medium text-white shadow-lg shadow-amber-500/25 transition-all duration-200 hover:bg-amber-700 hover:shadow-xl hover:shadow-amber-500/40 dark:bg-amber-500 dark:hover:bg-amber-600"
+                    disabled={isLoading}
+                    whileHover={!isLoading ? { scale: 1.02 } : {}}
+                    whileTap={!isLoading ? { scale: 0.98 } : {}}
+                    className="flex-1 rounded-xl bg-amber-600 py-3 font-medium text-white shadow-lg shadow-amber-500/25 transition-all duration-200 hover:bg-amber-700 hover:shadow-xl hover:shadow-amber-500/40 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-amber-500 dark:hover:bg-amber-600"
                   >
-                    Add
+                    {isLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2Icon size={18} className="animate-spin" />
+                        Adding...
+                      </span>
+                    ) : (
+                      "Add"
+                    )}
                   </motion.button>
                 </div>
               </form>

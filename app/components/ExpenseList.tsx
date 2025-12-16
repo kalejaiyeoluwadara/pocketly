@@ -49,12 +49,12 @@ export default function ExpenseList() {
             <span className="text-xs font-medium text-red-600">
               {formatCurrency(expense.amount, "6px")}
             </span>
-            <button
+            {/* <button
               onClick={() => deleteExpense(expense.id)}
               className="rounded-lg px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-red-500 dark:hover:bg-zinc-800"
             >
               Delete
-            </button>
+            </button> */}
           </div>
         </motion.div>
       ))}

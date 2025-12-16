@@ -2,23 +2,35 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusIcon } from "../icons";
+import { PlusIcon, Loader2Icon } from "../icons";
 import { useApp } from "../context/AppContext";
+import { toast } from "sonner";
 
 export default function PocketForm() {
   const { addPocket } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [initialBalance, setInitialBalance] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !initialBalance) return;
 
-    addPocket(name, parseFloat(initialBalance));
-    setName("");
-    setInitialBalance("");
-    setIsOpen(false);
+    setIsLoading(true);
+    try {
+      await addPocket(name, parseFloat(initialBalance));
+      toast.success("Pocket created successfully!");
+      setName("");
+      setInitialBalance("");
+      setIsOpen(false);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create pocket"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -91,20 +103,29 @@ export default function PocketForm() {
                 <div className="flex gap-3 pt-2">
                   <motion.button
                     type="button"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    disabled={isLoading}
+                    whileHover={!isLoading ? { scale: 1.02 } : {}}
+                    whileTap={!isLoading ? { scale: 0.98 } : {}}
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-medium text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
+                    className="flex-1 rounded-xl border-2 border-zinc-200 bg-white py-3 font-medium text-zinc-700 transition-all duration-200 hover:border-zinc-300 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-700"
                   >
                     Cancel
                   </motion.button>
                   <motion.button
                     type="submit"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 rounded-xl bg-indigo-600 py-3 font-medium text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/40 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                    disabled={isLoading}
+                    whileHover={!isLoading ? { scale: 1.02 } : {}}
+                    whileTap={!isLoading ? { scale: 0.98 } : {}}
+                    className="flex-1 rounded-xl bg-indigo-600 py-3 font-medium text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/40 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-indigo-500 dark:hover:bg-indigo-600"
                   >
-                    Create
+                    {isLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2Icon size={18} className="animate-spin" />
+                        Creating...
+                      </span>
+                    ) : (
+                      "Create"
+                    )}
                   </motion.button>
                 </div>
               </form>

@@ -6,6 +6,7 @@ import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import StreakTracker from "./components/StreakTracker";
+import { Toaster } from "sonner";
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
@@ -43,6 +44,7 @@ export default function RootLayout({
             <PWAInstallPrompt />
           </AppProvider>
         </Providers>
+        <Toaster position="top-right" richColors={false} />
         <Analytics />
       </body>
     </html>

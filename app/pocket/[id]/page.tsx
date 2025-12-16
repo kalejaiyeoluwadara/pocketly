@@ -49,21 +49,6 @@ export default function PocketDetailPage() {
   const [editingIncome, setEditingIncome] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  if (!pocket) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-50 pb-20 dark:bg-black">
-        <div className="mx-auto max-w-md px-4 py-6">
-          <p className="text-zinc-500 dark:text-zinc-400">Pocket not found</p>
-        </div>
-      </div>
-    );
-  }
-
-  const pocketExpenses = expenses.filter((e) => e.pocketId === pocket.id);
-  const pocketIncome = income.filter((i) => i.pocketId === pocket.id);
-  const totalSpent = pocketExpenses.reduce((sum, e) => sum + e.amount, 0);
-  const totalIncome = pocketIncome.reduce((sum, i) => sum + i.amount, 0);
-
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -94,6 +79,21 @@ export default function PocketDetailPage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isDropdownOpen, openTransactionDropdown]);
+
+  if (!pocket) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50 pb-20 dark:bg-black">
+        <div className="mx-auto max-w-md px-4 py-6">
+          <p className="text-zinc-500 dark:text-zinc-400">Pocket not found</p>
+        </div>
+      </div>
+    );
+  }
+
+  const pocketExpenses = expenses.filter((e) => e.pocketId === pocket.id);
+  const pocketIncome = income.filter((i) => i.pocketId === pocket.id);
+  const totalSpent = pocketExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalIncome = pocketIncome.reduce((sum, i) => sum + i.amount, 0);
 
   const handleDelete = () => {
     setIsDropdownOpen(false);

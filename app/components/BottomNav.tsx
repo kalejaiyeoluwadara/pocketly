@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { HomeIcon, TrendingDownIcon, TargetIcon } from "../icons";
+import { HomeIcon, TrendingDownIcon, TargetIcon, BrainIcon } from "../icons";
 
 const navItems = [
   { href: "/", label: "Pockets", icon: HomeIcon },
   { href: "/expenses", label: "Expenses", icon: TrendingDownIcon },
   { href: "/needs", label: "Needs", icon: TargetIcon },
+  { href: "/insights", label: "Insights", icon: BrainIcon },
 ];
 
 export default function BottomNav() {

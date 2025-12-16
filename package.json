@@ -10,6 +10,7 @@
     "generate-icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@vercel/analytics": "^1.6.1",
     "bcryptjs": "^3.0.3",
     "framer-motion": "^12.23.26",

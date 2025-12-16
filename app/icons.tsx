@@ -15,6 +15,7 @@ import {
   Smartphone,
   X,
   Loader2,
+  Flame,
 } from "lucide-react";
 
 export const WalletIcon = (props: LucideProps) => <Wallet {...props} />;
@@ -40,3 +41,4 @@ export const DownloadIcon = (props: LucideProps) => <Download {...props} />;
 export const SmartphoneIcon = (props: LucideProps) => <Smartphone {...props} />;
 export const XIcon = (props: LucideProps) => <X {...props} />;
 export const Loader2Icon = (props: LucideProps) => <Loader2 {...props} />;
+export const FlameIcon = (props: LucideProps) => <Flame {...props} />;

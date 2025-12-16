@@ -5,6 +5,7 @@ import { AppProvider } from "./context/AppContext";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import StreakTracker from "./components/StreakTracker";
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
       <body className={`${poppins.variable} antialiased`}>
         <Providers>
           <AppProvider>
+            <StreakTracker />
             {children}
             <PWAInstallPrompt />
           </AppProvider>

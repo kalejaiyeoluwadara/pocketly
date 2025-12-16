@@ -204,7 +204,7 @@ export default function ContributionGraph() {
       
 
       {/* Graph Container */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto pb-3">
         {/* Month labels - at the top, positioned like GitHub */}
         <div
           className="relative mb-2"
@@ -307,17 +307,7 @@ export default function ContributionGraph() {
       </div>
 
       {/* Legend */}
-      <div className="mt-6 flex items-center justify-center gap-4 text-xs text-zinc-500 dark:text-zinc-400">
-        <div className="flex items-center gap-2">
-          <span>Less</span>
-          <div className="flex gap-1">
-            <div className="w-3 h-3 rounded-sm bg-zinc-100 dark:bg-zinc-800" />
-            <div className="w-3 h-3 rounded-sm bg-emerald-200 dark:bg-emerald-900" />
-            <div className="w-3 h-3 rounded-sm bg-emerald-400 dark:bg-emerald-700" />
-            <div className="w-3 h-3 rounded-sm bg-emerald-600 dark:bg-emerald-500" />
-          </div>
-          <span>More</span>
-        </div>
+      <div className="mt-6 flex  items-center justify-end gap-4 text-xs text-zinc-500 dark:text-zinc-400">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-sm bg-emerald-400 dark:bg-emerald-700" />
           <span>Income</span>
@@ -392,7 +382,7 @@ export default function ContributionGraph() {
                 </div>
 
                 {/* Transactions */}
-                <div className="space-y-3 max-h-96 overflow-y-auto">
+                <div className="space-y-3 pb-3 max-h-96 overflow-y-auto">
                   {selectedDay.income.length === 0 &&
                   selectedDay.expenses.length === 0 ? (
                     <p className="text-center text-sm text-zinc-500 dark:text-zinc-400 py-8">

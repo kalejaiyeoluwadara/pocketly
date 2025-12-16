@@ -7,6 +7,9 @@ export interface IUser extends mongoose.Document {
   image?: string;
   provider: "credentials" | "google";
   googleId?: string;
+  currentStreak: number;
+  lastStreakDate?: Date;
+  longestStreak: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +45,19 @@ const UserSchema = new Schema<IUser>(
       type: String,
       sparse: true,
       unique: true,
+    },
+    currentStreak: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    lastStreakDate: {
+      type: Date,
+    },
+    longestStreak: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
   },
   {

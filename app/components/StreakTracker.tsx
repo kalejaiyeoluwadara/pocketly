@@ -21,8 +21,7 @@ export default function StreakTracker() {
         console.error("Failed to update streak:", error);
       });
     }
-  }, [status, session]);
+  }, []);
 
-  return null; // This component doesn't render anything
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { X, Trash2, Check, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
@@ -60,6 +60,8 @@ export default function NotificationsPanel({
   const [selectedCategory, setSelectedCategory] =
     useState<NotificationCategory>("all");
   const { data: session } = useSession();
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const hasInitializedRef = useRef(false);
 
   const fetchNotifications = async () => {
     try {
@@ -80,19 +82,37 @@ export default function NotificationsPanel({
   };
 
   useEffect(() => {
-    if (session) {
+    // Set up polling when session is available
+    if (session?.user?.id && !hasInitializedRef.current) {
+      hasInitializedRef.current = true;
+      // Initial fetch
       fetchNotifications();
-      // Poll for new notifications every 2 minutes
-      const interval = setInterval(fetchNotifications, 120000);
-      return () => clearInterval(interval);
+      // Set up polling for new notifications every 2 minutes
+      pollingIntervalRef.current = setInterval(fetchNotifications, 120000);
     }
-  }, []);
+
+    // Clean up when session is lost
+    if (!session?.user?.id && hasInitializedRef.current) {
+      hasInitializedRef.current = false;
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    };
+  }, [session?.user?.id]); // Use stable user ID instead of entire session object
 
   useEffect(() => {
     if (isOpen && session) {
       fetchNotifications();
     }
-  }, [isOpen, session]);
+  }, [isOpen]); // Only depend on isOpen, not session
 
   const handleMarkAsRead = async (id: string) => {
     try {

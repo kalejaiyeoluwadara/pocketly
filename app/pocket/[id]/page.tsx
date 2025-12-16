@@ -152,21 +152,21 @@ export default function PocketDetailPage() {
                       : 'border-zinc-200/50 bg-white dark:border-zinc-800/50 dark:bg-zinc-900'
                   }`}
                 >
-                  <div className="flex items-center gap-3 flex-1">
+                  <div className="flex items-center gap-2 flex-1">
                     {transaction.type === 'income' ? (
-                      <div className="rounded-lg bg-emerald-500 p-2">
-                        <TrendingUpIcon size={16} className="text-white" />
+                      <div className="rounded-md bg-emerald-500 p-[4px]">
+                        <TrendingUpIcon size={13} className="text-white" />
                       </div>
                     ) : (
-                      <div className="rounded-lg bg-red-600 p-2">
-                        <TrendingDownIcon size={16} className="text-white" />
+                      <div className="rounded-md bg-red-600 p-[4px]">
+                        <TrendingDownIcon size={13} className="text-white" />
                       </div>
                     )}
                     <div className="flex-1">
-                      <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                      <p className="font-medium text-sm text-zinc-900 dark:text-zinc-50">
                         {transaction.description}
                       </p>
-                      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                      <p className="text-[8px] text-zinc-500 dark:text-zinc-400">
                         {moment(transaction.createdAt).format("MMM D, YYYY")}
                       </p>
                     </div>
@@ -178,7 +178,7 @@ export default function PocketDetailPage() {
                         : "text-red-600"
                     }`}
                   >
-                    {transaction.type === 'income' ? '+' : '-'} {formatCurrency(transaction.amount, "6px")}
+                    {formatCurrency(transaction.amount, "6px")}
                   </span>
                 </motion.div>
               ))}

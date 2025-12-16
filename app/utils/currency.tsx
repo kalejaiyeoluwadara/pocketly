@@ -9,7 +9,7 @@ export function formatCurrency(amount: number, fontSize: string = "14px"): JSX.E
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return (
     <>
-      <span className={`text-[${fontSize}] mr-1`}>₦</span>
+      <span className={`text-[${fontSize}] mr-[2px]`}>₦</span>
       {formattedAmount}
     </>
   );

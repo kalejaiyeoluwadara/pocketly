@@ -201,8 +201,6 @@ export default function ContributionGraph() {
         </p>
       </div> */}
 
-      
-
       {/* Graph Container */}
       <div className="overflow-x-auto pb-3">
         {/* Month labels - at the top, positioned like GitHub */}
@@ -362,7 +360,7 @@ export default function ContributionGraph() {
                 </div>
 
                 {/* Summary */}
-                <div className="mb-6 grid grid-cols-2 gap-4 rounded-xl border border-zinc-200/50 bg-zinc-50/50 p-4 dark:border-zinc-800/50 dark:bg-zinc-800/50">
+                <div className="mb-6 flex justify-between gap-4 rounded-xl border border-zinc-200/50 bg-zinc-50/50 p-4 dark:border-zinc-800/50 dark:bg-zinc-800/50">
                   <div>
                     <p className="mb-1 text-xs text-zinc-500 dark:text-zinc-400">
                       Total Income
@@ -382,7 +380,7 @@ export default function ContributionGraph() {
                 </div>
 
                 {/* Transactions */}
-                <div className="space-y-3 pb-3 max-h-96 overflow-y-auto">
+                <div className="flex gap-1 flex-col pb-1 max-h-[170px] overflow-y-scroll scrollbar-hide">
                   {selectedDay.income.length === 0 &&
                   selectedDay.expenses.length === 0 ? (
                     <p className="text-center text-sm text-zinc-500 dark:text-zinc-400 py-8">
@@ -397,10 +395,10 @@ export default function ContributionGraph() {
                           animate={{ opacity: 1, x: 0 }}
                           className="flex items-center justify-between rounded-xl border border-emerald-200/50 bg-emerald-50/50 p-3 dark:border-emerald-800/50 dark:bg-emerald-900/20"
                         >
-                          <div className="flex items-center gap-3 flex-1">
-                            <div className="rounded-lg bg-emerald-500 p-2">
+                          <div className="flex items-center gap-2 flex-1">
+                            <div className="rounded-md bg-emerald-500 p-[4px]">
                               <TrendingUpIcon
-                                size={16}
+                                size={13}
                                 className="text-white"
                               />
                             </div>
@@ -414,7 +412,7 @@ export default function ContributionGraph() {
                             </div>
                           </div>
                           <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                            +{formatCurrency(inc.amount)}
+                            {formatCurrency(inc.amount)}
                           </span>
                         </motion.div>
                       ))}
@@ -425,10 +423,10 @@ export default function ContributionGraph() {
                           animate={{ opacity: 1, x: 0 }}
                           className="flex items-center justify-between rounded-xl border border-zinc-200/50 bg-white p-3 dark:border-zinc-800/50 dark:bg-zinc-900"
                         >
-                          <div className="flex items-center gap-3 flex-1">
-                            <div className="rounded-lg bg-red-600 p-2">
+                          <div className="flex items-center gap-2 flex-1">
+                            <div className="rounded-md bg-red-600 p-[4px]">
                               <TrendingDownIcon
-                                size={16}
+                                size={13}
                                 className="text-white"
                               />
                             </div>
@@ -442,7 +440,7 @@ export default function ContributionGraph() {
                             </div>
                           </div>
                           <span className="text-sm font-medium text-red-600 dark:text-red-400">
-                            -{formatCurrency(exp.amount)}
+                            {formatCurrency(exp.amount)}
                           </span>
                         </motion.div>
                       ))}

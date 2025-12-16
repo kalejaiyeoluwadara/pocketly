@@ -92,7 +92,7 @@ function Nav() {
               <User2Icon size={20} className="text-white" />
             )}
           </div>
-          <p className="text-md font-bold text-zinc-900 dark:text-zinc-50">
+          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             Hi,{" "}
             <span className="uppercase">
               {userName.split(" ")[0].slice(0, 10)}

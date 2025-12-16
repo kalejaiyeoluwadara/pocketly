@@ -12,6 +12,7 @@ import {
   PlusIcon,
 } from "../icons";
 import { formatCurrency } from "../utils/currency";
+import { TrashIcon } from "lucide-react";
 
 const priorityConfig: Record<
   Priority,
@@ -67,30 +68,30 @@ export default function NeedsList() {
             transition={{ delay: index * 0.05 }}
             className="flex items-center justify-between rounded-xl border border-zinc-200/50 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md dark:border-zinc-800/50 dark:bg-zinc-900"
           >
-            <div className="flex items-center gap-3 flex-1">
-              <Icon size={20} className={config.color} />
+            <div className="flex items-center gap-2 flex-1">
+              <Icon size={13} className={config.color} />
               <div className="flex-1">
-                <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                <p className="font-medium text-sm text-zinc-900 dark:text-zinc-50">
                   {need.title}
                 </p>
-                <div className="mt-1 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-                  <span className={`font-medium ${config.color}`}>
+                <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+                  <span className={`text-[8px] font-medium ${config.color}`}>
                     {config.label}
                   </span>
                   <span>•</span>
-                  <span>{moment(need.createdAt).format("MMM D, YYYY")}</span>
+                  <span className="text-[8px]">{moment(need.createdAt).format("MMM D, YYYY")}</span>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-lg font-medium text-zinc-900 dark:text-zinc-50">
-                {formatCurrency(need.amount)}
+              <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                {formatCurrency(need.amount, "6px")}
               </span>
               <button
                 onClick={() => deleteNeed(need.id)}
                 className="rounded-lg px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-red-500 dark:hover:bg-zinc-800"
               >
-                Delete
+                <TrashIcon size={13} className="text-zinc-400 hover:text-red-500 dark:text-zinc-400 dark:hover:text-red-500" />
               </button>
             </div>
           </motion.div>

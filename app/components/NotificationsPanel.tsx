@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { X, Trash2, Check, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
-import { Notification } from "../types";
+import { Notification, NotificationType } from "../types";
 import moment from "moment";
 
 interface NotificationsPanelProps {
@@ -12,6 +12,42 @@ interface NotificationsPanelProps {
   onClose: () => void;
   onUnreadCountChange?: (count: number) => void;
 }
+
+type NotificationCategory = "all" | "pockets" | "expenses" | "income" | "needs";
+
+const categoryConfig: Record<
+  NotificationCategory,
+  {
+    label: string;
+    types: NotificationType[];
+  }
+> = {
+  all: {
+    label: "All",
+    types: [],
+  },
+  pockets: {
+    label: "Pockets",
+    types: [
+      "pocket_created",
+      "pocket_deleted",
+      "pocket_balance_negative",
+      "pocket_balance_positive",
+    ],
+  },
+  expenses: {
+    label: "Expenses",
+    types: ["expense_created", "expense_updated", "expense_deleted"],
+  },
+  income: {
+    label: "Income",
+    types: ["income_created", "income_updated", "income_deleted"],
+  },
+  needs: {
+    label: "Needs",
+    types: ["need_created", "need_updated", "need_deleted"],
+  },
+};
 
 export default function NotificationsPanel({
   isOpen,
@@ -21,6 +57,8 @@ export default function NotificationsPanel({
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] =
+    useState<NotificationCategory>("all");
   const { data: session } = useSession();
 
   const fetchNotifications = async () => {
@@ -44,11 +82,11 @@ export default function NotificationsPanel({
   useEffect(() => {
     if (session) {
       fetchNotifications();
-      // Poll for new notifications every 30 seconds
-      const interval = setInterval(fetchNotifications, 30000);
+      // Poll for new notifications every 2 minutes
+      const interval = setInterval(fetchNotifications, 120000);
       return () => clearInterval(interval);
     }
-  }, [session]);
+  }, []);
 
   useEffect(() => {
     if (isOpen && session) {
@@ -113,6 +151,28 @@ export default function NotificationsPanel({
     }
   };
 
+  // Filter notifications by selected category
+  const filteredNotifications = useMemo(() => {
+    if (selectedCategory === "all") {
+      return notifications;
+    }
+    const categoryTypes = categoryConfig[selectedCategory].types;
+    return notifications.filter((notification) =>
+      categoryTypes.includes(notification.type)
+    );
+  }, [notifications, selectedCategory]);
+
+  // Get count for each category
+  const getCategoryCount = (category: NotificationCategory): number => {
+    if (category === "all") {
+      return notifications.length;
+    }
+    const categoryTypes = categoryConfig[category].types;
+    return notifications.filter((notification) =>
+      categoryTypes.includes(notification.type)
+    ).length;
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -122,14 +182,14 @@ export default function NotificationsPanel({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm pb-8"
           />
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-sm border-l border-zinc-200/50 bg-white/95 backdrop-blur-xl shadow-elevated-lg dark:border-zinc-800/50 dark:bg-zinc-900/95"
+            className="fixed top-0 right-0 bottom-0 z-[100] w-full max-w-sm border-l border-zinc-200/50 bg-white/95 backdrop-blur-xl shadow-elevated-lg dark:border-zinc-800/50 dark:bg-zinc-900/95"
           >
             <div className="flex h-full flex-col">
               <div className="flex items-center justify-between border-b border-zinc-200/50 p-4 dark:border-zinc-800/50">
@@ -153,22 +213,66 @@ export default function NotificationsPanel({
                   <X size={18} className="text-zinc-600 dark:text-zinc-400" />
                 </button>
               </div>
+              {/* Category Filter */}
+              <div className="border-b border-zinc-200/50 px-4 py-3 dark:border-zinc-800/50">
+                <div className="flex items-center gap-2 overflow-x-auto">
+                  {(Object.keys(categoryConfig) as NotificationCategory[]).map(
+                    (category) => {
+                      const config = categoryConfig[category];
+                      const count = getCategoryCount(category);
+                      const isActive = selectedCategory === category;
+
+                      return (
+                        <button
+                          key={category}
+                          onClick={() => setSelectedCategory(category)}
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${
+                            isActive
+                              ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900"
+                              : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                          }`}
+                        >
+                          <span>{config.label}</span>
+                          {count > 0 && (
+                            <span
+                              className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                                isActive
+                                  ? "bg-white/20 dark:bg-zinc-900/20"
+                                  : "bg-zinc-200 dark:bg-zinc-700"
+                              }`}
+                            >
+                              {count}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
               <div className="flex-1 overflow-y-auto">
                 {isLoading ? (
                   <div className="flex items-center justify-center p-6">
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      <Loader2 size={20} className="text-zinc-600 dark:text-zinc-400 animate-spin" />
+                      <Loader2
+                        size={20}
+                        className="text-zinc-600 dark:text-zinc-400 animate-spin"
+                      />
                     </p>
                   </div>
-                ) : notifications.length === 0 ? (
+                ) : filteredNotifications.length === 0 ? (
                   <div className="flex items-center justify-center p-6">
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      No notifications yet
+                      {notifications.length === 0
+                        ? "No notifications yet"
+                        : `No ${categoryConfig[
+                            selectedCategory
+                          ].label.toLowerCase()} notifications`}
                     </p>
                   </div>
                 ) : (
                   <div className="divide-y divide-zinc-200/50 dark:divide-zinc-800/50">
-                    {notifications.map((notification) => (
+                    {filteredNotifications.map((notification) => (
                       <motion.div
                         key={notification.id}
                         initial={{ opacity: 0, y: 10 }}
@@ -199,7 +303,9 @@ export default function NotificationsPanel({
                           <div className="flex items-center gap-1 flex-shrink-0">
                             {!notification.read && (
                               <button
-                                onClick={() => handleMarkAsRead(notification.id)}
+                                onClick={() =>
+                                  handleMarkAsRead(notification.id)
+                                }
                                 className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                                 title="Mark as read"
                               >
@@ -235,4 +341,3 @@ export default function NotificationsPanel({
     </AnimatePresence>
   );
 }
-

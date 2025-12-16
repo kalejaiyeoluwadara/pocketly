@@ -47,7 +47,7 @@ export default function ExpenseList() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs font-medium text-red-600">
-              -{formatCurrency(expense.amount, "6px")}
+              {formatCurrency(expense.amount, "6px")}
             </span>
             <button
               onClick={() => deleteExpense(expense.id)}

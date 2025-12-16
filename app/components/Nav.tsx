@@ -100,8 +100,7 @@ function Nav() {
           </p>
         </section>
         <section className="flex items-center gap-2">
-          {true && (
-          // {currentStreak > 0 && (
+          {currentStreak > 0 && (
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/30  dark:border-orange-900/50">
               <FlameIcon
                 size={18}
@@ -109,7 +108,7 @@ function Nav() {
                 fill="currentColor"
               />
               <span className="text-sm font-semibold text-orange-600 dark:text-orange-400">
-                {3}
+                {currentStreak}
               </span>
             </div>
           )}

@@ -4,6 +4,7 @@ export type NotificationType =
   | "pocket_created"
   | "pocket_deleted"
   | "pocket_balance_negative"
+  | "pocket_balance_positive"
   | "expense_created"
   | "expense_updated"
   | "expense_deleted"

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PencilIcon } from "lucide-react";
 import { Pocket } from "../types";
+import { Pencil } from "lucide-react";
 
 interface UpdatePocketModalProps {
   isOpen: boolean;
@@ -61,7 +61,7 @@ export default function UpdatePocketModal({
           >
             <div className="mb-6 flex items-center gap-3">
               <div className="rounded-xl bg-indigo-600 p-2 dark:bg-indigo-500">
-                <PencilIcon size={20} className="text-white" />
+                <Pencil size={20} className="text-white" />
               </div>
               <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-50">
                 Update Pocket
@@ -121,6 +121,7 @@ export default function UpdatePocketModal({
     </AnimatePresence>
   );
 }
+
 
 
 

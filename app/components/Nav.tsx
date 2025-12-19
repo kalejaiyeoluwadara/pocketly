@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { LogOut, Bell, User2Icon } from "lucide-react";
+import { Bell, LogOut, User } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import LogoutModal from "./LogoutModal";
 import NotificationsPanel from "./NotificationsPanel";
@@ -47,28 +47,42 @@ function Nav() {
   // Fetch streak data
   useEffect(() => {
     if (session) {
-      const fetchStreak = async () => {
+      const fetchAndUpdateStreak = async () => {
         try {
+          // First, fetch current streak data
           const response = await fetch("/api/streak");
           if (response.ok) {
             const data = await response.json();
+
+            // Check if lastStreakDate is different from today
+            const today = new Date().toDateString();
+            const lastStreakDate = data.lastStreakDate
+              ? new Date(data.lastStreakDate).toDateString()
+              : null;
+
+            // If lastStreakDate is not today, update the streak
+            if (lastStreakDate !== today) {
+              const updateResponse = await fetch("/api/streak", {
+                method: "POST",
+              });
+
+              if (updateResponse.ok) {
+                const updatedData = await updateResponse.json();
+                setCurrentStreak(updatedData.currentStreak || 0);
+                return;
+              }
+            }
+
+            // Otherwise, just use the fetched data
             setCurrentStreak(data.currentStreak || 0);
           }
         } catch (error) {
-          console.error("Failed to fetch streak:", error);
+          console.error("Failed to fetch/update streak:", error);
         }
       };
 
-      // Initial fetch
-      fetchStreak();
-      // Refresh after 2 seconds to account for StreakTracker update
-      const initialTimeout = setTimeout(fetchStreak, 2000);
-      // Refresh streak every minute to keep it updated
-      const interval = setInterval(fetchStreak, 60000);
-      return () => {
-        clearTimeout(initialTimeout);
-        clearInterval(interval);
-      };
+      // Initial fetch and update on mount
+      fetchAndUpdateStreak();
     }
   }, [session]);
 
@@ -89,7 +103,7 @@ function Nav() {
                 height={40}
               />
             ) : (
-              <User2Icon size={20} className="text-white" />
+              <User className="w-5 h-5 text-white" />
             )}
           </div>
           <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
@@ -116,7 +130,7 @@ function Nav() {
             onClick={() => setIsNotificationsOpen(true)}
             className="relative h-10 w-10 flex items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
-            <Bell size={20} className="text-zinc-900 dark:text-zinc-50" />
+            <Bell className="w-5 h-5 text-zinc-900 dark:text-zinc-50" />
             {unreadCount > 0 && (
               <span className="absolute top-1 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-medium">
                 {unreadCount > 9 ? "9+" : unreadCount}
@@ -128,7 +142,7 @@ function Nav() {
             className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
             title="Sign out"
           >
-            <LogOut size={20} className="text-zinc-900 dark:text-zinc-50" />
+            <LogOut className="w-5 h-5 text-zinc-900 dark:text-zinc-50" />
           </button>
         </section>
       </nav>

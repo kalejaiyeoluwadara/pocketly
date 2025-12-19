@@ -6,9 +6,15 @@ import { useApp } from "../context/AppContext";
 import EmptyState from "./EmptyState";
 import { PlusIcon } from "../icons";
 import { formatCurrency } from "../utils/currency";
+import { Expense } from "../types";
 
-export default function ExpenseList() {
-  const { expenses, pockets, deleteExpense } = useApp();
+interface ExpenseListProps {
+  expenses?: Expense[];
+}
+
+export default function ExpenseList({ expenses: propExpenses }: ExpenseListProps) {
+  const { expenses: contextExpenses, pockets, deleteExpense } = useApp();
+  const expenses = propExpenses || contextExpenses;
 
   const getPocketName = (pocketId: string) => {
     return pockets.find((p) => p.id === pocketId)?.name || "Unknown";

@@ -4,8 +4,8 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mail, Lock, Eye, EyeOff, Wallet } from "lucide-react";
-import { WalletIcon } from "../icons";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -89,8 +89,13 @@ export default function AuthPage() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 mb-4">
-            <WalletIcon className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+          <div className="inline-flex items-center justify-center w-16 h-16  mb-4">
+            <Image
+              src="/images/wallet-icon.svg"
+              alt="Pocketly"
+              width={48}
+              height={48}
+            />
           </div>
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
             Welcome to Pocketly
@@ -200,7 +205,7 @@ export default function AuthPage() {
                     tabIndex={-1}
                   >
                     {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
+                        <EyeOff className="w-5 h-5" />
                     ) : (
                       <Eye className="w-5 h-5" />
                     )}
@@ -225,8 +230,8 @@ export default function AuthPage() {
         </div>
 
         <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
-          Don&apos;t have an account? Sign in with your email and password to create
-          one automatically.
+          Don&apos;t have an account? Sign in with your email and password to
+          create one automatically.
         </p>
       </motion.div>
     </div>

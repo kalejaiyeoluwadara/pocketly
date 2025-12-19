@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PencilIcon } from "lucide-react";
 import { Expense } from "../types";
-import { Loader2Icon } from "../icons";
+import { Loader2Icon, PencilIcon } from "../icons";
 import { toast } from "sonner";
 
 interface UpdateExpenseModalProps {

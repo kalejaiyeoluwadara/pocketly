@@ -6,6 +6,7 @@ import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import StreakTracker from "./components/StreakTracker";
+import PWASplashScreen from "./components/PWASplashScreen";
 import { Toaster } from "sonner";
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body className={`${poppins.variable} antialiased`}>
         <Providers>
           <AppProvider>
+            <PWASplashScreen duration={2000} />
             <StreakTracker />
             {children}
             <PWAInstallPrompt />

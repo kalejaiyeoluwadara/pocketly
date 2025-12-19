@@ -3,11 +3,19 @@
   "short_name": "Pocketly",
   "description": "Track your expenses and manage your pockets",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#18181b",
+  "background_color": "#fafafa",
+  "theme_color": "#10b981",
   "orientation": "portrait",
+  "categories": ["finance", "productivity"],
   "icons": [
+    {
+      "src": "/images/wallet-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
@@ -19,6 +27,20 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Expense",
+      "short_name": "Expense",
+      "description": "Quickly add a new expense",
+      "url": "/expenses",
+      "icons": [
+        {
+          "src": "/images/wallet-icon.svg",
+          "sizes": "96x96"
+        }
+      ]
     }
   ]
 }

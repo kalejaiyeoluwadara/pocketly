@@ -6,8 +6,6 @@ import { DownloadIcon, SmartphoneIcon, XIcon } from "../icons";
 
 export default function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isAndroid, setIsAndroid] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
@@ -26,10 +24,9 @@ export default function PWAInstallPrompt() {
     const isAndroidDevice = /android/.test(userAgent);
     const isMobile = isIOSDevice || isAndroidDevice;
 
-    if (!isMobile) return;
-
-    setIsIOS(isIOSDevice);
-    setIsAndroid(isAndroidDevice);
+    // Don't show prompt for iOS devices since they can't install via prompt
+    // Also skip if not mobile
+    if (!isMobile || isIOSDevice) return;
 
     // For Android/Chrome - listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -38,11 +35,6 @@ export default function PWAInstallPrompt() {
       // Show prompt after a short delay
       setTimeout(() => setShowPrompt(true), 2000);
     };
-
-    // For iOS - show prompt after a delay
-    if (isIOSDevice) {
-      setTimeout(() => setShowPrompt(true), 2000);
-    }
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
@@ -114,11 +106,27 @@ export default function PWAInstallPrompt() {
               access.
             </p>
 
-            {isIOS ? (
-              <div className="space-y-4">
+            <div className="space-y-4">
+              {deferredPrompt ? (
+                <>
+                  <button
+                    onClick={handleInstall}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                  >
+                    <DownloadIcon size={18} />
+                    Install Now
+                  </button>
+                  <button
+                    onClick={handleDismiss}
+                    className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                  >
+                    Maybe Later
+                  </button>
+                </>
+              ) : (
                 <div className="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
                   <p className="mb-3 text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                    Install on iOS (Safari):
+                    Install on Android (Chrome):
                   </p>
                   <ol className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
                     <li className="flex items-start gap-2">
@@ -126,7 +134,8 @@ export default function PWAInstallPrompt() {
                         1
                       </span>
                       <span>
-                        Tap the <strong>Share</strong> button at the bottom
+                        Tap the <strong>menu</strong> (three dots) in the top
+                        right
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -134,8 +143,8 @@ export default function PWAInstallPrompt() {
                         2
                       </span>
                       <span>
-                        Scroll down and tap{" "}
-                        <strong>&quot;Add to Home Screen&quot;</strong>
+                        Select <strong>&quot;Add to Home screen&quot;</strong>{" "}
+                        or <strong>&quot;Install app&quot;</strong>
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
@@ -143,73 +152,13 @@ export default function PWAInstallPrompt() {
                         3
                       </span>
                       <span>
-                        Tap <strong>&quot;Add&quot;</strong> to confirm
+                        Tap <strong>&quot;Install&quot;</strong> to confirm
                       </span>
                     </li>
                   </ol>
                 </div>
-                <button
-                  onClick={handleDismiss}
-                  className="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                >
-                  Got it!
-                </button>
-              </div>
-            ) : isAndroid ? (
-              <div className="space-y-4">
-                {deferredPrompt ? (
-                  <>
-                    <button
-                      onClick={handleInstall}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                    >
-                      <DownloadIcon size={18} />
-                      Install Now
-                    </button>
-                    <button
-                      onClick={handleDismiss}
-                      className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                    >
-                      Maybe Later
-                    </button>
-                  </>
-                ) : (
-                  <div className="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
-                    <p className="mb-3 text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                      Install on Android (Chrome):
-                    </p>
-                    <ol className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
-                      <li className="flex items-start gap-2">
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
-                          1
-                        </span>
-                        <span>
-                          Tap the <strong>menu</strong> (three dots) in the top
-                          right
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
-                          2
-                        </span>
-                        <span>
-                          Select <strong>&quot;Add to Home screen&quot;</strong>{" "}
-                          or <strong>&quot;Install app&quot;</strong>
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
-                          3
-                        </span>
-                        <span>
-                          Tap <strong>&quot;Install&quot;</strong> to confirm
-                        </span>
-                      </li>
-                    </ol>
-                  </div>
-                )}
-              </div>
-            ) : null}
+              )}
+            </div>
           </motion.div>
         </>
       )}

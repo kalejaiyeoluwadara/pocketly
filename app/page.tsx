@@ -9,8 +9,7 @@ import EmptyState from "./components/EmptyState";
 import BottomNav from "./components/BottomNav";
 import LoadingModal from "./components/LoadingModal";
 import { formatCurrency } from "./utils/currency";
-import { Eye, EyeOff, Shield } from "lucide-react";
-import { PlusIcon } from "./icons";
+import { PlusIcon, EyeIcon, EyeOffIcon, ShieldIcon } from "./icons";
 import Nav from "./components/Nav";
 import ContributionGraph from "./components/ContributionGraph";
 
@@ -28,14 +27,14 @@ export default function Home() {
           <div className="rounded-2xl flex justify-between border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
             <section>
               <p className="mb-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 flex items-center">
-                <Shield size={16} className="mr-1" />
+                <ShieldIcon size={16} className="mr-1" />
                 Total Balance
                 <button
                   onClick={() => setShowBalance(!showBalance)}
                   className="ml-1 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
                   aria-label={showBalance ? "Hide balance" : "Show balance"}
                 >
-                  {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
+                  {showBalance ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
                 </button>
               </p>
               <p className="font-medium text-zinc-900 dark:text-zinc-50">

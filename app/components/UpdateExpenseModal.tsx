@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Expense } from "../types";
-import { Loader2Icon, PencilIcon } from "../icons";
+import { Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 interface UpdateExpenseModalProps {
@@ -69,7 +69,7 @@ export default function UpdateExpenseModal({
           >
             <div className="mb-6 flex items-center gap-3">
               <div className="rounded-xl bg-red-600 p-2 dark:bg-red-500">
-                <PencilIcon size={20} className="text-white" />
+                <Pencil size={20} className="text-white" />
               </div>
               <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-50">
                 Update Expense
@@ -124,7 +124,7 @@ export default function UpdateExpenseModal({
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center gap-2">
-                      <Loader2Icon size={18} className="animate-spin" />
+                      <Loader2 size={18} className="animate-spin" />
                       Updating...
                     </span>
                   ) : (

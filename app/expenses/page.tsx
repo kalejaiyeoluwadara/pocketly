@@ -98,7 +98,7 @@ export default function ExpensesPage() {
         <div className="mb-4 flex gap-2">
           <button
             onClick={() => handleFilterChange("all")}
-            className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+            className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
               filterPeriod === "all"
                 ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
                 : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
@@ -108,7 +108,7 @@ export default function ExpensesPage() {
           </button>
           <button
             onClick={() => handleFilterChange("week")}
-            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+            className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
               filterPeriod === "week"
                 ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
                 : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
@@ -118,7 +118,7 @@ export default function ExpensesPage() {
           </button>
           <button
             onClick={() => handleFilterChange("month")}
-            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+            className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
               filterPeriod === "month"
                 ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
                 : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
@@ -146,9 +146,6 @@ export default function ExpensesPage() {
               <span>Previous</span>
             </button>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                Page {currentPage} of {totalPages}
-              </span>
               <span className="text-xs text-zinc-400 dark:text-zinc-600">
                 ({filteredExpenses.length}{" "}
                 {filteredExpenses.length === 1 ? "expense" : "expenses"})

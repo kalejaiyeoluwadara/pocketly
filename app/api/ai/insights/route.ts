@@ -57,8 +57,84 @@ interface SpendingAnalysis {
   recommendations: string[];
 }
 
-// Helper function to categorize expenses based on description
-function categorizeExpense(description: string): string {
+// Standard expense categories
+const EXPENSE_CATEGORIES = [
+  "Food & Dining",
+  "Transportation",
+  "Shopping",
+  "Bills & Utilities",
+  "Entertainment",
+  "Health & Medical",
+  "Education",
+  "Subscriptions",
+  "Travel",
+  "Personal Care",
+  "Home & Garden",
+  "Gifts & Donations",
+  "Fitness & Sports",
+  "Insurance",
+  "Investments",
+  "Other",
+];
+
+// AI-powered batch expense categorization
+async function categorizeExpensesWithAI(
+  expenses: Array<{ description: string; amount: number }>
+): Promise<Map<string, string>> {
+  if (expenses.length === 0) return new Map();
+
+  try {
+    // Prepare expenses for categorization (limit to avoid token limits)
+    const expensesToCategorize = expenses.slice(0, 100);
+    const expensesList = expensesToCategorize
+      .map((exp, idx) => `${idx}: "${exp.description}" (₦${exp.amount})`)
+      .join("\n");
+
+    const prompt = `Categorize these expenses into one of the following categories:
+${EXPENSE_CATEGORIES.join(", ")}
+
+Expenses to categorize:
+${expensesList}
+
+Return ONLY a JSON object mapping the expense index to its category. Example format:
+{
+  "0": "Food & Dining",
+  "1": "Transportation",
+  "2": "Shopping"
+}
+
+Be precise and consistent. Consider the context of each expense description.`;
+
+    const text = await generateWithFallback(prompt);
+
+    // Parse the AI response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const categorizations = JSON.parse(jsonMatch[0]);
+      const resultMap = new Map<string, string>();
+
+      // Map categorizations back to descriptions
+      expensesToCategorize.forEach((exp, idx) => {
+        const category = categorizations[idx.toString()];
+        if (category && EXPENSE_CATEGORIES.includes(category)) {
+          resultMap.set(exp.description, category);
+        } else {
+          resultMap.set(exp.description, "Other");
+        }
+      });
+
+      return resultMap;
+    }
+  } catch (error) {
+    console.error("AI categorization failed:", error);
+  }
+
+  // Return empty map on failure - will use fallback categorization
+  return new Map();
+}
+
+// Fallback categorization for when AI fails or isn't available
+function fallbackCategorizeExpense(description: string): string {
   const desc = description.toLowerCase();
 
   if (
@@ -66,7 +142,12 @@ function categorizeExpense(description: string): string {
     desc.includes("restaurant") ||
     desc.includes("grocery") ||
     desc.includes("meal") ||
-    desc.includes("eat")
+    desc.includes("eat") ||
+    desc.includes("lunch") ||
+    desc.includes("dinner") ||
+    desc.includes("breakfast") ||
+    desc.includes("cafe") ||
+    desc.includes("coffee")
   ) {
     return "Food & Dining";
   }
@@ -75,7 +156,11 @@ function categorizeExpense(description: string): string {
     desc.includes("uber") ||
     desc.includes("taxi") ||
     desc.includes("fuel") ||
-    desc.includes("gas")
+    desc.includes("gas") ||
+    desc.includes("bus") ||
+    desc.includes("train") ||
+    desc.includes("flight") ||
+    desc.includes("parking")
   ) {
     return "Transportation";
   }
@@ -83,7 +168,10 @@ function categorizeExpense(description: string): string {
     desc.includes("shopping") ||
     desc.includes("store") ||
     desc.includes("mall") ||
-    desc.includes("buy")
+    desc.includes("buy") ||
+    desc.includes("purchase") ||
+    desc.includes("cloth") ||
+    desc.includes("fashion")
   ) {
     return "Shopping";
   }
@@ -92,7 +180,9 @@ function categorizeExpense(description: string): string {
     desc.includes("utility") ||
     desc.includes("electricity") ||
     desc.includes("water") ||
-    desc.includes("internet")
+    desc.includes("internet") ||
+    desc.includes("phone") ||
+    desc.includes("rent")
   ) {
     return "Bills & Utilities";
   }
@@ -101,7 +191,9 @@ function categorizeExpense(description: string): string {
     desc.includes("movie") ||
     desc.includes("game") ||
     desc.includes("netflix") ||
-    desc.includes("stream")
+    desc.includes("stream") ||
+    desc.includes("concert") ||
+    desc.includes("show")
   ) {
     return "Entertainment";
   }
@@ -109,7 +201,10 @@ function categorizeExpense(description: string): string {
     desc.includes("health") ||
     desc.includes("medical") ||
     desc.includes("pharmacy") ||
-    desc.includes("doctor")
+    desc.includes("doctor") ||
+    desc.includes("hospital") ||
+    desc.includes("medicine") ||
+    desc.includes("clinic")
   ) {
     return "Health & Medical";
   }
@@ -117,16 +212,49 @@ function categorizeExpense(description: string): string {
     desc.includes("education") ||
     desc.includes("school") ||
     desc.includes("course") ||
-    desc.includes("book")
+    desc.includes("book") ||
+    desc.includes("tuition") ||
+    desc.includes("training")
   ) {
     return "Education";
   }
   if (
     desc.includes("subscription") ||
     desc.includes("membership") ||
-    desc.includes("premium")
+    desc.includes("premium") ||
+    desc.includes("monthly fee")
   ) {
     return "Subscriptions";
+  }
+  if (
+    desc.includes("gym") ||
+    desc.includes("fitness") ||
+    desc.includes("sport") ||
+    desc.includes("workout")
+  ) {
+    return "Fitness & Sports";
+  }
+  if (
+    desc.includes("hotel") ||
+    desc.includes("travel") ||
+    desc.includes("vacation") ||
+    desc.includes("trip")
+  ) {
+    return "Travel";
+  }
+  if (
+    desc.includes("insurance") ||
+    desc.includes("policy") ||
+    desc.includes("premium")
+  ) {
+    return "Insurance";
+  }
+  if (
+    desc.includes("gift") ||
+    desc.includes("donation") ||
+    desc.includes("charity")
+  ) {
+    return "Gifts & Donations";
   }
 
   return "Other";
@@ -205,10 +333,30 @@ export async function GET(request: NextRequest) {
     );
     const averagePerDay = totalSpent / daysDiff;
 
-    // Categorize expenses
+    // Categorize expenses using AI
     const categoryMap = new Map<string, { amount: number; count: number }>();
+    let aiCategorizationMap = new Map<string, string>();
+
+    try {
+      // Try AI categorization first
+      aiCategorizationMap = await categorizeExpensesWithAI(
+        expenses.map((exp) => ({
+          description: exp.description,
+          amount: exp.amount,
+        }))
+      );
+      console.log(
+        `✓ AI categorized ${aiCategorizationMap.size} expenses successfully`
+      );
+    } catch (error) {
+      console.error("AI categorization failed, using fallback:", error);
+    }
+
+    // Build category map using AI categorization or fallback
     expenses.forEach((exp) => {
-      const category = categorizeExpense(exp.description);
+      const category =
+        aiCategorizationMap.get(exp.description) ||
+        fallbackCategorizeExpense(exp.description);
       const existing = categoryMap.get(category) || { amount: 0, count: 0 };
       categoryMap.set(category, {
         amount: existing.amount + exp.amount,

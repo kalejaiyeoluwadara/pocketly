@@ -42,6 +42,7 @@ export async function GET(
       title: need.title,
       amount: need.amount,
       priority: need.priority,
+      completed: need.completed || false,
       createdAt: need.createdAt.toISOString(),
       updatedAt: need.updatedAt.toISOString(),
     });
@@ -66,6 +67,49 @@ export async function PUT(
     }
 
     const body = await request.json();
+    
+    // For completed toggle, only validate completed field
+    if (body.completed !== undefined && Object.keys(body).length === 1) {
+      await connectDB();
+
+      const need = await Need.findOne({
+        _id: params.id,
+        userId: new mongoose.Types.ObjectId(user.id),
+      });
+
+      if (!need) {
+        return notFoundResponse("Need");
+      }
+
+      need.completed = body.completed;
+      await need.save();
+
+      // Create notification for need completion
+      if (body.completed) {
+        await createNotification({
+          userId: user.id,
+          type: "need_updated",
+          title: "Need Completed",
+          message: `You completed a need: "${need.title}" - ${formatCurrencyForNotification(need.amount)}`,
+          metadata: {
+            needId: need._id.toString(),
+            amount: need.amount,
+          },
+        });
+      }
+
+      return NextResponse.json({
+        id: need._id.toString(),
+        title: need.title,
+        amount: need.amount,
+        priority: need.priority,
+        completed: need.completed,
+        createdAt: need.createdAt.toISOString(),
+        updatedAt: need.updatedAt.toISOString(),
+      });
+    }
+
+    // For full update, validate all fields
     const validationError = validateRequest(body, ["title", "amount", "priority"]);
     if (validationError) {
       return NextResponse.json(
@@ -102,6 +146,9 @@ export async function PUT(
     need.title = body.title;
     need.amount = body.amount;
     need.priority = body.priority;
+    if (body.completed !== undefined) {
+      need.completed = body.completed;
+    }
 
     await need.save();
 
@@ -122,6 +169,7 @@ export async function PUT(
       title: need.title,
       amount: need.amount,
       priority: need.priority,
+      completed: need.completed,
       createdAt: need.createdAt.toISOString(),
       updatedAt: need.updatedAt.toISOString(),
     });

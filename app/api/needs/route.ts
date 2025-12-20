@@ -29,6 +29,7 @@ export async function GET() {
       title: need.title,
       amount: need.amount,
       priority: need.priority,
+      completed: need.completed || false,
       createdAt: need.createdAt.toISOString(),
       updatedAt: need.updatedAt.toISOString(),
     }));
@@ -97,6 +98,7 @@ export async function POST(request: NextRequest) {
         title: need.title,
         amount: need.amount,
         priority: need.priority,
+        completed: need.completed || false,
         createdAt: need.createdAt.toISOString(),
         updatedAt: need.updatedAt.toISOString(),
       },

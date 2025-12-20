@@ -18,6 +18,7 @@ interface AppContextType {
   updateIncome: (id: string, pocketId: string, amount: number, description: string) => Promise<void>;
   addNeed: (title: string, amount: number, priority: "high" | "medium" | "low") => Promise<void>;
   updateNeed: (id: string, title: string, amount: number, priority: "high" | "medium" | "low") => Promise<void>;
+  toggleNeedCompletion: (id: string, completed: boolean) => Promise<void>;
   deletePocket: (id: string) => Promise<void>;
   deleteExpense: (id: string) => Promise<void>;
   deleteIncome: (id: string) => Promise<void>;
@@ -368,6 +369,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const toggleNeedCompletion = async (id: string, completed: boolean) => {
+    try {
+      setError(null);
+      const response = await fetch(`/api/needs/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update need");
+      }
+
+      const updatedNeed = await response.json();
+      setNeeds(needs.map((n) => (n.id === id ? updatedNeed : n)));
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update need";
+      setError(errorMessage);
+      throw err;
+    }
+  };
+
   const deleteNeed = async (id: string) => {
     try {
       setError(null);
@@ -409,6 +433,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         updateIncome,
         addNeed,
         updateNeed,
+        toggleNeedCompletion,
         deletePocket,
         deleteExpense,
         deleteIncome,

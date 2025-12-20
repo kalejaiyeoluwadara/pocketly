@@ -6,6 +6,7 @@ export interface INeed extends mongoose.Document {
   title: string;
   amount: number;
   priority: Priority;
+  completed: boolean;
   userId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -28,6 +29,10 @@ const NeedSchema = new Schema<INeed>(
       enum: ["high", "medium", "low"],
       required: true,
       default: "medium",
+    },
+    completed: {
+      type: Boolean,
+      default: false,
     },
     userId: {
       type: Schema.Types.ObjectId,

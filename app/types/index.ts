@@ -46,6 +46,7 @@ export interface Need {
   title: string;
   amount: number;
   priority: Priority;
+  completed: boolean;
   createdAt: string;
   updatedAt: string;
 }

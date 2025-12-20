@@ -8,7 +8,8 @@ import ExpenseList from "../components/ExpenseList";
 import BottomNav from "../components/BottomNav";
 import { formatCurrency } from "../utils/currency";
 import Nav from "../components/Nav";
-import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar } from "lucide-react";
+import Pagination from "../components/Pagination";
 
 type FilterPeriod = "all" | "week" | "month";
 
@@ -131,40 +132,14 @@ export default function ExpensesPage() {
         <ExpenseList expenses={paginatedExpenses} />
 
         {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="mt-6 flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
-                currentPage === 1
-                  ? "text-zinc-300 cursor-not-allowed dark:text-zinc-700"
-                  : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Previous</span>
-            </button>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-zinc-400 dark:text-zinc-600">
-                ({filteredExpenses.length}{" "}
-                {filteredExpenses.length === 1 ? "expense" : "expenses"})
-              </span>
-            </div>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
-                currentPage === totalPages
-                  ? "text-zinc-300 cursor-not-allowed dark:text-zinc-700"
-                  : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
-              }`}
-            >
-              <span>Next</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredExpenses.length}
+          itemName="expense"
+          onPreviousPage={handlePreviousPage}
+          onNextPage={handleNextPage}
+        />
       </div>
       <BottomNav />
     </div>

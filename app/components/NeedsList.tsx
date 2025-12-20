@@ -35,12 +35,21 @@ const priorityConfig: Record<
   },
 };
 
-export default function NeedsList() {
-  const { needs, deleteNeed } = useApp();
+interface NeedsListProps {
+  needs?: any[];
+}
+
+export default function NeedsList({ needs: needsProp }: NeedsListProps = {}) {
+  const { needs: contextNeeds, deleteNeed, toggleNeedCompletion } = useApp();
+  const needs = needsProp || contextNeeds;
 
   const sortedNeeds = [...needs].sort((a, b) => {
+    // Sort by completion status first, then by priority
+    if (a.completed !== b.completed) {
+      return a.completed ? 1 : -1;
+    }
     const priorityOrder = { high: 0, medium: 1, low: 2 };
-    return priorityOrder[a.priority] - priorityOrder[b.priority];
+    return priorityOrder[a.priority as keyof typeof priorityOrder] - priorityOrder[b.priority as keyof typeof priorityOrder];
   });
 
   if (needs.length === 0) {
@@ -57,7 +66,7 @@ export default function NeedsList() {
   return (
     <div className="space-y-2">
       {sortedNeeds.map((need, index) => {
-        const config = priorityConfig[need.priority];
+        const config = priorityConfig[need.priority as keyof typeof priorityConfig];
         const Icon = config.icon;
 
         return (
@@ -66,12 +75,27 @@ export default function NeedsList() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="flex items-center justify-between rounded-xl border border-zinc-200/50 bg-white p-4 shadow-sm transition-all duration-200 hover:shadow-md dark:border-zinc-800/50 dark:bg-zinc-900"
+            className={`flex items-center justify-between rounded-xl border p-4 shadow-sm transition-all duration-200 hover:shadow-md ${
+              need.completed
+                ? "border-zinc-200/30 bg-zinc-50/50 opacity-60 dark:border-zinc-800/30 dark:bg-zinc-900/50"
+                : "border-zinc-200/50 bg-white dark:border-zinc-800/50 dark:bg-zinc-900"
+            }`}
           >
-            <div className="flex items-center gap-2 flex-1">
-              <Icon size={13} className={config.color} />
+            <div className="flex items-center gap-3 flex-1">
+              <button
+                onClick={() => toggleNeedCompletion(need.id, !need.completed)}
+                className="flex-shrink-0 transition-all duration-200 hover:scale-110"
+                aria-label={need.completed ? "Mark as incomplete" : "Mark as complete"}
+              >
+                {need.completed ? (
+                  <CheckCircleIcon size={20} className="text-green-500" />
+                ) : (
+                  <CircleIcon size={20} className="text-zinc-300 dark:text-zinc-600" />
+                )}
+              </button>
+              {/* <Icon size={13} className={config.color} /> */}
               <div className="flex-1">
-                <p className="font-medium text-sm text-zinc-900 dark:text-zinc-50">
+                <p className={`font-medium text-sm ${need.completed ? "line-through text-zinc-500 dark:text-zinc-500" : "text-zinc-900 dark:text-zinc-50"}`}>
                   {need.title}
                 </p>
                 <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
@@ -84,7 +108,7 @@ export default function NeedsList() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+              <span className={`text-sm font-medium ${need.completed ? "line-through text-zinc-500 dark:text-zinc-500" : "text-zinc-900 dark:text-zinc-50"}`}>
                 {formatCurrency(need.amount, "6px")}
               </span>
               <button

@@ -7,6 +7,7 @@ import { DownloadIcon, SmartphoneIcon, XIcon } from "../icons";
 export default function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
     // Check if user has already dismissed the prompt
@@ -24,9 +25,15 @@ export default function PWAInstallPrompt() {
     const isAndroidDevice = /android/.test(userAgent);
     const isMobile = isIOSDevice || isAndroidDevice;
 
-    // Don't show prompt for iOS devices since they can't install via prompt
-    // Also skip if not mobile
-    if (!isMobile || isIOSDevice) return;
+    // Skip if not mobile
+    if (!isMobile) return;
+
+    // For iOS, show instructions immediately
+    if (isIOSDevice) {
+      setIsIOS(true);
+      setTimeout(() => setShowPrompt(true), 2000);
+      return;
+    }
 
     // For Android/Chrome - listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -107,7 +114,56 @@ export default function PWAInstallPrompt() {
             </p>
 
             <div className="space-y-4">
-              {deferredPrompt ? (
+              {isIOS ? (
+                <div className="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                  <p className="mb-3 text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                    Add to Home Screen on iOS:
+                  </p>
+                  <ol className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
+                        1
+                      </span>
+                      <span>
+                        Tap the <strong>Share</strong> button{" "}
+                        <span className="inline-block">
+                          <svg
+                            className="inline-block h-3 w-3"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.9-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z" />
+                          </svg>
+                        </span>{" "}
+                        at the bottom (Safari)
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
+                        2
+                      </span>
+                      <span>
+                        Scroll and tap{" "}
+                        <strong>&quot;Add to Home Screen&quot;</strong>
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
+                        3
+                      </span>
+                      <span>
+                        Tap <strong>&quot;Add&quot;</strong> to confirm
+                      </span>
+                    </li>
+                  </ol>
+                  <button
+                    onClick={handleDismiss}
+                    className="mt-4 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                  >
+                    Got it
+                  </button>
+                </div>
+              ) : deferredPrompt ? (
                 <>
                   <button
                     onClick={handleInstall}

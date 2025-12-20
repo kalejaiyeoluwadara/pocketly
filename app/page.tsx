@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useApp } from "./context/AppContext";
 import PocketCard from "./components/PocketCard";
-import PocketForm from "./components/PocketForm";
+import PocketForm, { PocketFormRef } from "./components/PocketForm";
 import EmptyState from "./components/EmptyState";
 import BottomNav from "./components/BottomNav";
 import LoadingModal from "./components/LoadingModal";
@@ -16,7 +16,8 @@ import ContributionGraph from "./components/ContributionGraph";
 export default function Home() {
   const { pockets, isLoading } = useApp();
   const totalBalance = pockets.reduce((sum, pocket) => sum + pocket.balance, 0);
-  const [showBalance, setShowBalance] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
+  const pocketFormRef = useRef<PocketFormRef>(null);
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
@@ -34,7 +35,7 @@ export default function Home() {
                   className="ml-1 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
                   aria-label={showBalance ? "Hide balance" : "Show balance"}
                 >
-                    {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
+                  {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
                 </button>
               </p>
               <p className="font-medium text-zinc-900 dark:text-zinc-50">
@@ -51,7 +52,7 @@ export default function Home() {
               </p>
             </section>
             <section className="flex justify-end items-center">
-              <PocketForm />
+              <PocketForm ref={pocketFormRef} />
             </section>
           </div>
         </div>
@@ -63,6 +64,7 @@ export default function Home() {
               iconColor="zinc"
               title="No pockets yet"
               description="Create your first pocket to start tracking your finances!"
+              onClick={() => pocketFormRef.current?.open()}
             />
           ) : (
             <section className="flex flex-col gap-2">

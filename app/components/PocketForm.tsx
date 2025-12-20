@@ -1,17 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlusIcon, Loader2Icon } from "../icons";
 import { useApp } from "../context/AppContext";
 import { toast } from "sonner";
 
-export default function PocketForm() {
+export interface PocketFormRef {
+  open: () => void;
+}
+
+const PocketForm = forwardRef<PocketFormRef>((props, ref) => {
   const { addPocket } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [initialBalance, setInitialBalance] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    open: () => setIsOpen(true),
+  }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,4 +143,8 @@ export default function PocketForm() {
       </AnimatePresence>
     </>
   );
-}
+});
+
+PocketForm.displayName = "PocketForm";
+
+export default PocketForm;

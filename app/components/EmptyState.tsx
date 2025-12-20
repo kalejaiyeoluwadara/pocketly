@@ -9,6 +9,7 @@ interface EmptyStateProps {
   iconColor?: "red" | "amber" | "zinc" | "blue" | "green";
   title: string;
   description: string;
+  onClick?: () => void;
 }
 
 const iconColorClasses = {
@@ -39,6 +40,7 @@ export default function EmptyState({
   iconColor = "zinc",
   title,
   description,
+  onClick,
 }: EmptyStateProps) {
   const colorClasses = iconColorClasses[iconColor];
 
@@ -46,7 +48,12 @@ export default function EmptyState({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border-2 border-dashed border-zinc-300 bg-white p-12 text-center dark:border-zinc-700 dark:bg-zinc-900"
+      onClick={onClick}
+      className={`rounded-2xl border-2 border-dashed border-zinc-300 bg-white p-12 text-center dark:border-zinc-700 dark:bg-zinc-900 ${
+        onClick
+          ? "cursor-pointer hover:border-zinc-400 hover:bg-zinc-50 dark:hover:border-zinc-600 dark:hover:bg-zinc-800/50 transition-all duration-200"
+          : ""
+      }`}
     >
       <div
         className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${colorClasses.bg}`}

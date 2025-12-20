@@ -33,11 +33,11 @@ export default function Pagination({
         <ChevronLeft className="w-4 h-4" />
         <span>Previous</span>
       </button>
-      <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
         <span className="text-xs text-zinc-400 dark:text-zinc-600">
           ({totalItems} {totalItems === 1 ? itemName : `${itemName}s`})
         </span>
-      </div>
+      </div> */}
       <button
         onClick={onNextPage}
         disabled={currentPage === totalPages}

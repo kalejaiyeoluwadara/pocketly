@@ -10,9 +10,13 @@ import { Expense } from "../types";
 
 interface ExpenseListProps {
   expenses?: Expense[];
+  onEmptyClick?: () => void;
 }
 
-export default function ExpenseList({ expenses: propExpenses }: ExpenseListProps) {
+export default function ExpenseList({
+  expenses: propExpenses,
+  onEmptyClick,
+}: ExpenseListProps) {
   const { expenses: contextExpenses, pockets, deleteExpense } = useApp();
   const expenses = propExpenses || contextExpenses;
 
@@ -27,6 +31,7 @@ export default function ExpenseList({ expenses: propExpenses }: ExpenseListProps
         iconColor="red"
         title="No expenses yet"
         description="Start tracking your spending by adding your first expense!"
+        onClick={onEmptyClick}
       />
     );
   }

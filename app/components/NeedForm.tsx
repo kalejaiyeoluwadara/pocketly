@@ -1,19 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlusIcon, Loader2Icon } from "../icons";
 import { useApp } from "../context/AppContext";
 import { Priority } from "../types";
 import { toast } from "sonner";
 
-export default function NeedForm() {
+export interface NeedFormRef {
+  open: () => void;
+}
+
+const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
   const { addNeed } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
   const [isLoading, setIsLoading] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    open: () => setIsOpen(true),
+  }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,4 +162,8 @@ export default function NeedForm() {
       </AnimatePresence>
     </>
   );
-}
+});
+
+NeedForm.displayName = "NeedForm";
+
+export default NeedForm;

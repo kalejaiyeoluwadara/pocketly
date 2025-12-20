@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useApp } from "../context/AppContext";
-import NeedForm from "../components/NeedForm";
+import NeedForm, { NeedFormRef } from "../components/NeedForm";
 import NeedsList from "../components/NeedsList";
 import BottomNav from "../components/BottomNav";
 import { formatCurrency } from "../utils/currency";
@@ -14,6 +14,7 @@ const ITEMS_PER_PAGE = 10;
 export default function NeedsPage() {
   const { needs } = useApp();
   const [currentPage, setCurrentPage] = useState(1);
+  const needFormRef = useRef<NeedFormRef>(null);
 
   const activeNeeds = useMemo(
     () => needs.filter((need) => !need.completed),
@@ -72,12 +73,15 @@ export default function NeedsPage() {
               )}
             </div>
             <div className="mt-2 flex items-start justify-start">
-              <NeedForm />
+              <NeedForm ref={needFormRef} />
             </div>
           </div>
         </div>
 
-        <NeedsList needs={paginatedNeeds} />
+        <NeedsList 
+          needs={paginatedNeeds}
+          onEmptyClick={() => needFormRef.current?.open()}
+        />
 
         {/* Pagination Controls */}
         <Pagination

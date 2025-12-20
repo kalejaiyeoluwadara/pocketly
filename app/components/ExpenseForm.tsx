@@ -1,17 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PlusIcon, Loader2Icon } from "../icons";
 import { useApp } from "../context/AppContext";
 import { formatCurrency } from "../utils/currency";
 import { toast } from "sonner";
 
+export interface ExpenseFormRef {
+  open: () => void;
+}
+
 interface ExpenseFormProps {
   defaultPocketId?: string;
 }
 
-export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
+const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
+  ({ defaultPocketId }, ref) => {
   const { pockets, addExpense } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [pocketId, setPocketId] = useState(defaultPocketId || "");
@@ -26,6 +31,10 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
       setPocketId(pockets[0].id);
     }
   }, [defaultPocketId, pockets]);
+
+  useImperativeHandle(ref, () => ({
+    open: () => setIsOpen(true),
+  }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,4 +196,8 @@ export default function ExpenseForm({ defaultPocketId }: ExpenseFormProps) {
       </AnimatePresence>
     </>
   );
-}
+});
+
+ExpenseForm.displayName = "ExpenseForm";
+
+export default ExpenseForm;

@@ -37,9 +37,13 @@ const priorityConfig: Record<
 
 interface NeedsListProps {
   needs?: any[];
+  onEmptyClick?: () => void;
 }
 
-export default function NeedsList({ needs: needsProp }: NeedsListProps = {}) {
+export default function NeedsList({ 
+  needs: needsProp,
+  onEmptyClick 
+}: NeedsListProps = {}) {
   const { needs: contextNeeds, deleteNeed, toggleNeedCompletion } = useApp();
   const needs = needsProp || contextNeeds;
 
@@ -59,6 +63,7 @@ export default function NeedsList({ needs: needsProp }: NeedsListProps = {}) {
         iconColor="amber"
         title="No needs yet"
         description="Add items you need to save for!"
+        onClick={onEmptyClick}
       />
     );
   }

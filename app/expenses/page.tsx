@@ -1,24 +1,26 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import moment from "moment";
 import { useApp } from "../context/AppContext";
-import ExpenseForm from "../components/ExpenseForm";
+import ExpenseForm, { ExpenseFormRef } from "../components/ExpenseForm";
 import ExpenseList from "../components/ExpenseList";
 import BottomNav from "../components/BottomNav";
 import { formatCurrency } from "../utils/currency";
 import Nav from "../components/Nav";
 import { Calendar } from "lucide-react";
 import Pagination from "../components/Pagination";
+import { toast } from "sonner";
 
 type FilterPeriod = "all" | "week" | "month";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function ExpensesPage() {
-  const { expenses } = useApp();
+  const { expenses, pockets } = useApp();
   const [filterPeriod, setFilterPeriod] = useState<FilterPeriod>("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const expenseFormRef = useRef<ExpenseFormRef>(null);
 
   // Filter expenses based on selected period
   const filteredExpenses = useMemo(() => {
@@ -68,6 +70,14 @@ export default function ExpensesPage() {
     return "All Time";
   };
 
+  const handleEmptyStateClick = () => {
+    if (pockets.length === 0) {
+      toast.error("Please create a pocket first before adding expenses!");
+      return;
+    }
+    expenseFormRef.current?.open();
+  };
+
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
       <Nav />
@@ -90,7 +100,7 @@ export default function ExpensesPage() {
               </span>
             </p>
             <div className="mt-4 flex items-start justify-start">
-              <ExpenseForm />
+              <ExpenseForm ref={expenseFormRef} />
             </div>
           </div>
         </div>
@@ -129,7 +139,10 @@ export default function ExpensesPage() {
           </button>
         </div>
 
-        <ExpenseList expenses={paginatedExpenses} />
+        <ExpenseList
+          expenses={paginatedExpenses}
+          onEmptyClick={handleEmptyStateClick}
+        />
 
         {/* Pagination Controls */}
         <Pagination

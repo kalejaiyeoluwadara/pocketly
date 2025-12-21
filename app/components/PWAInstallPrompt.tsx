@@ -212,6 +212,12 @@ export default function PWAInstallPrompt() {
                       </span>
                     </li>
                   </ol>
+                  <button
+                    onClick={handleDismiss}
+                    className="mt-4 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                  >
+                    Maybe Later
+                  </button>
                 </div>
               )}
             </div>

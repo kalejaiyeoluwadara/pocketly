@@ -8,7 +8,7 @@ import ExpenseList from "../components/ExpenseList";
 import BottomNav from "../components/BottomNav";
 import { formatCurrency } from "../utils/currency";
 import Nav from "../components/Nav";
-import { Calendar } from "lucide-react";
+import { Calendar, Search } from "lucide-react";
 import Pagination from "../components/Pagination";
 import { toast } from "sonner";
 
@@ -20,23 +20,42 @@ export default function ExpensesPage() {
   const { expenses, pockets } = useApp();
   const [filterPeriod, setFilterPeriod] = useState<FilterPeriod>("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const expenseFormRef = useRef<ExpenseFormRef>(null);
 
-  // Filter expenses based on selected period
+  // Filter expenses based on selected period and search query
   const filteredExpenses = useMemo(() => {
-    if (filterPeriod === "all") return expenses;
+    let filtered = expenses;
 
-    const now = moment();
-    return expenses.filter((expense) => {
-      const expenseDate = moment(expense.createdAt);
-      if (filterPeriod === "week") {
-        return expenseDate.isSame(now, "week");
-      } else if (filterPeriod === "month") {
-        return expenseDate.isSame(now, "month");
-      }
-      return true;
-    });
-  }, [expenses, filterPeriod]);
+    // Filter by period
+    if (filterPeriod !== "all") {
+      const now = moment();
+      filtered = filtered.filter((expense) => {
+        const expenseDate = moment(expense.createdAt);
+        if (filterPeriod === "week") {
+          return expenseDate.isSame(now, "week");
+        } else if (filterPeriod === "month") {
+          return expenseDate.isSame(now, "month");
+        }
+        return true;
+      });
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter((expense) => {
+        const pocketName =
+          pockets.find((p) => p.id === expense.pocketId)?.name || "";
+        return (
+          expense.description.toLowerCase().includes(query) ||
+          pocketName.toLowerCase().includes(query)
+        );
+      });
+    }
+
+    return filtered;
+  }, [expenses, filterPeriod, searchQuery, pockets]);
 
   // Calculate total for filtered expenses
   const totalExpenses = filteredExpenses.reduce(
@@ -54,6 +73,12 @@ export default function ExpensesPage() {
   const handleFilterChange = (period: FilterPeriod) => {
     setFilterPeriod(period);
     setCurrentPage(1);
+    setSearchQuery(""); // Reset search when changing filters
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to page 1 when searching
   };
 
   const handlePreviousPage = () => {
@@ -102,6 +127,20 @@ export default function ExpensesPage() {
             <div className="mt-4 flex items-start justify-start">
               <ExpenseForm ref={expenseFormRef} />
             </div>
+          </div>
+        </div>
+
+        {/* Search Input */}
+        <div className="mb-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="Search expenses by description or pocket..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full rounded-lg border border-zinc-200 bg-white px-10 py-3 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-100 dark:focus:ring-zinc-100"
+            />
           </div>
         </div>
 

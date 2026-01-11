@@ -28,16 +28,24 @@ interface SelectedDay {
 export default function ContributionGraph() {
   const { expenses, income, pockets } = useApp();
   const [selectedDay, setSelectedDay] = useState<SelectedDay | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
 
-  // Generate the last 371 days (53 weeks)
+  // Generate all days for the selected year
   const days = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const startOfYear = new Date(selectedYear, 0, 1); // January 1st of selected year
+    const endOfYear = new Date(selectedYear, 11, 31); // December 31st of selected year
     const daysArray: DayData[] = [];
 
-    for (let i = 370; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
+    const totalDays =
+      Math.ceil(
+        (endOfYear.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)
+      ) + 1;
+
+    for (let i = 0; i < totalDays; i++) {
+      const date = new Date(startOfYear);
+      date.setDate(date.getDate() + i);
       date.setHours(0, 0, 0, 0);
 
       const dateStr = date.toISOString().split("T")[0];
@@ -82,7 +90,7 @@ export default function ContributionGraph() {
     }
 
     return daysArray;
-  }, [expenses, income]);
+  }, [expenses, income, selectedYear]);
 
   // Group days by weeks (53 weeks)
   const weeks = useMemo(() => {
@@ -109,12 +117,10 @@ export default function ContributionGraph() {
         if (currentMonth !== lastMonth || currentYear !== lastYear) {
           lastMonth = currentMonth;
           lastYear = currentYear;
-          // Only show year for January or if year changed
-          const showYear = currentMonth === "Jan" || currentYear !== lastYear;
           labels.push({
             weekIndex,
             label: currentMonth,
-            year: showYear ? currentYear : undefined,
+            year: undefined,
           });
         }
       }
@@ -190,16 +196,31 @@ export default function ContributionGraph() {
     (d) => d.expenses.length > 0 || d.income.length > 0
   ).length;
 
+  // Calculate expenses for the selected year
+  const expensesInYear = expenses.filter((expense) => {
+    const expenseYear = new Date(expense.createdAt).getFullYear();
+    return expenseYear === selectedYear;
+  }).length;
+
   return (
-    <div className="rounded-2xl border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
-      {/* <div className="mb-6">
-        <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-50 mb-2">
-          Activity Graph
-        </h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
-          Track your spending and income over the past year
-        </p>
-      </div> */}
+    <div className="rounded-2xl border border-zinc-200/50 bg-white pt-2 px-6 pb-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
+      {/* Header with Year Filter */}
+      <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-lg mt-2 font-medium text-zinc-900 dark:text-zinc-50 mb-2">
+            {expensesInYear} expense{expensesInYear !== 1 ? "s" : ""} in{" "}
+            {selectedYear}
+          </h2>
+        <div className="flex items-center gap-2">
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            className="rounded-lg border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-900 focus:border-zinc-400 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-zinc-600"
+          >
+            <option value={2025}>2025</option>
+            <option value={2026}>2026</option>
+          </select>
+        </div>
+      </div>
 
       {/* Graph Container */}
       <div className="overflow-x-auto pb-3">
@@ -223,7 +244,7 @@ export default function ContributionGraph() {
             return (
               <div
                 key={`${weekIndex}-${label}`}
-                className="absolute text-[10px] text-zinc-500 dark:text-zinc-400"
+                className="absolute translate-x-6 text-[10px] text-zinc-500 dark:text-zinc-400"
                 style={{
                   left: `${position}px`,
                   width: `${width}px`,

@@ -5,6 +5,7 @@ import moment from "moment";
 import { useApp } from "../context/AppContext";
 import ExpenseForm, { ExpenseFormRef } from "../components/ExpenseForm";
 import ExpenseList from "../components/ExpenseList";
+import BankTransactionList from "../components/BankTransactionList";
 import BottomNav from "../components/BottomNav";
 import { formatCurrency } from "../utils/currency";
 import Nav from "../components/Nav";
@@ -13,11 +14,13 @@ import Pagination from "../components/Pagination";
 import { toast } from "sonner";
 
 type FilterPeriod = "all" | "week" | "month";
+type TransactionView = "manual" | "bank";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function ExpensesPage() {
-  const { expenses, pockets } = useApp();
+  const { expenses, pockets, bankTransactions } = useApp();
+  const [transactionView, setTransactionView] = useState<TransactionView>("manual");
   const [filterPeriod, setFilterPeriod] = useState<FilterPeriod>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -144,44 +147,85 @@ export default function ExpensesPage() {
           </div>
         </div>
 
-        {/* Filter Buttons */}
+        {/* View Toggle */}
         <div className="mb-4 flex gap-2">
           <button
-            onClick={() => handleFilterChange("all")}
+            onClick={() => setTransactionView("manual")}
             className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
-              filterPeriod === "all"
+              transactionView === "manual"
                 ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
                 : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
             }`}
           >
-            All Time
+            Manual Expenses
           </button>
           <button
-            onClick={() => handleFilterChange("week")}
+            onClick={() => setTransactionView("bank")}
             className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
-              filterPeriod === "week"
+              transactionView === "bank"
                 ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
                 : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
             }`}
           >
-            This Week
-          </button>
-          <button
-            onClick={() => handleFilterChange("month")}
-            className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
-              filterPeriod === "month"
-                ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
-                : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
-            }`}
-          >
-            This Month
+            Bank Transactions
           </button>
         </div>
 
-        <ExpenseList
-          expenses={paginatedExpenses}
-          onEmptyClick={handleEmptyStateClick}
-        />
+        {/* Filter Buttons - Only show for manual expenses */}
+        {transactionView === "manual" && (
+          <div className="mb-4 flex gap-2">
+            <button
+              onClick={() => handleFilterChange("all")}
+              className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
+                filterPeriod === "all"
+                  ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                  : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
+              }`}
+            >
+              All Time
+            </button>
+            <button
+              onClick={() => handleFilterChange("week")}
+              className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
+                filterPeriod === "week"
+                  ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                  : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
+              }`}
+            >
+              This Week
+            </button>
+            <button
+              onClick={() => handleFilterChange("month")}
+              className={`flex-1 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
+                filterPeriod === "month"
+                  ? "bg-zinc-900 text-white shadow-sm dark:bg-zinc-100 dark:text-zinc-900"
+                  : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 dark:hover:bg-zinc-800"
+              }`}
+            >
+              This Month
+            </button>
+          </div>
+        )}
+
+        {transactionView === "manual" ? (
+          <>
+            <ExpenseList
+              expenses={paginatedExpenses}
+              onEmptyClick={handleEmptyStateClick}
+            />
+            {/* Pagination Controls */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredExpenses.length}
+              itemName="expense"
+              onPreviousPage={handlePreviousPage}
+              onNextPage={handleNextPage}
+            />
+          </>
+        ) : (
+          <BankTransactionList transactions={bankTransactions} />
+        )}
 
         {/* Pagination Controls */}
         <Pagination

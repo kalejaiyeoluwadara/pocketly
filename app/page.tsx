@@ -8,13 +8,14 @@ import PocketForm, { PocketFormRef } from "./components/PocketForm";
 import EmptyState from "./components/EmptyState";
 import BottomNav from "./components/BottomNav";
 import LoadingModal from "./components/LoadingModal";
-import { formatCurrency } from "./utils/currency";
 import { PlusIcon, Eye, EyeOff, Shield } from "lucide-react";
 import Nav from "./components/Nav";
 import ContributionGraph from "./components/ContributionGraph";
+import Link from "next/link";
+import { Building2Icon } from "./icons";
 
 export default function Home() {
-  const { pockets, isLoading } = useApp();
+  const { pockets, isLoading, bankAccounts } = useApp();
   const totalBalance = pockets.reduce((sum, pocket) => sum + pocket.balance, 0);
   const [showBalance, setShowBalance] = useState(true);
   const pocketFormRef = useRef<PocketFormRef>(null);
@@ -56,6 +57,31 @@ export default function Home() {
             </section>
           </div>
         </div>
+
+        {/* Bank Accounts Quick Link */}
+        {bankAccounts.length > 0 && (
+          <div className="mb-4">
+            <Link href="/bank-accounts">
+              <div className="rounded-xl border border-blue-200/50 bg-blue-50/50 p-4 dark:border-blue-800/50 dark:bg-blue-900/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-lg bg-blue-600 p-2">
+                      <Building2Icon size={18} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                        {bankAccounts.length} Bank Account{bankAccounts.length !== 1 ? "s" : ""} Linked
+                      </p>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        View bank transactions
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </div>
+        )}
 
         <div className="space-y-4">
           {pockets.length === 0 ? (

@@ -17,6 +17,11 @@ import {
   Loader2,
   Flame,
   Brain,
+  Building2,
+  CreditCard,
+  RefreshCw,
+  Link2,
+  Unlink,
 } from "lucide-react";
 
 export const WalletIcon = (props: LucideProps) => <Wallet {...props} />;
@@ -44,3 +49,8 @@ export const XIcon = (props: LucideProps) => <X {...props} />;
 export const Loader2Icon = (props: LucideProps) => <Loader2 {...props} />;
 export const FlameIcon = (props: LucideProps) => <Flame {...props} />;
 export const BrainIcon = (props: LucideProps) => <Brain {...props} />;
+export const Building2Icon = (props: LucideProps) => <Building2 {...props} />;
+export const CreditCardIcon = (props: LucideProps) => <CreditCard {...props} />;
+export const RefreshCwIcon = (props: LucideProps) => <RefreshCw {...props} />;
+export const Link2Icon = (props: LucideProps) => <Link2 {...props} />;
+export const UnlinkIcon = (props: LucideProps) => <Unlink {...props} />;

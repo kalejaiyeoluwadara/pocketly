@@ -1,13 +1,15 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Pocket, Expense, Income, Need } from "../types";
+import { Pocket, Expense, Income, Need, BankAccount, BankTransaction } from "../types";
 
 interface AppContextType {
   pockets: Pocket[];
   expenses: Expense[];
   income: Income[];
   needs: Need[];
+  bankAccounts: BankAccount[];
+  bankTransactions: BankTransaction[];
   isLoading: boolean;
   error: string | null;
   addPocket: (name: string, initialBalance: number) => Promise<void>;
@@ -23,7 +25,11 @@ interface AppContextType {
   deleteExpense: (id: string) => Promise<void>;
   deleteIncome: (id: string) => Promise<void>;
   deleteNeed: (id: string) => Promise<void>;
+  linkBankAccount: (code: string) => Promise<void>;
+  unlinkBankAccount: (id: string) => Promise<void>;
+  syncBankAccount: (id: string) => Promise<void>;
   refreshData: () => Promise<void>;
+  refreshBankData: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -33,6 +39,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [income, setIncome] = useState<Income[]>([]);
   const [needs, setNeeds] = useState<Need[]>([]);
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
+  const [bankTransactions, setBankTransactions] = useState<BankTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -72,8 +80,31 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Fetch bank data
+  const fetchBankData = async () => {
+    try {
+      const [accountsRes, transactionsRes] = await Promise.all([
+        fetch("/api/bank-accounts"),
+        fetch("/api/bank-transactions"),
+      ]);
+
+      if (accountsRes.ok) {
+        const accountsData = await accountsRes.json();
+        setBankAccounts(accountsData);
+      }
+
+      if (transactionsRes.ok) {
+        const transactionsData = await transactionsRes.json();
+        setBankTransactions(transactionsData.data || []);
+      }
+    } catch (err) {
+      console.error("Error fetching bank data:", err);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchBankData();
   }, []);
 
   const addPocket = async (name: string, initialBalance: number) => {
@@ -416,6 +447,73 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     await fetchData();
   };
 
+  const refreshBankData = async () => {
+    await fetchBankData();
+  };
+
+  const linkBankAccount = async (code: string) => {
+    try {
+      setError(null);
+      const response = await fetch("/api/bank-accounts/link/callback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to link bank account");
+      }
+
+      await fetchBankData();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to link bank account";
+      setError(errorMessage);
+      throw err;
+    }
+  };
+
+  const unlinkBankAccount = async (id: string) => {
+    try {
+      setError(null);
+      const response = await fetch(`/api/bank-accounts/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to unlink bank account");
+      }
+
+      setBankAccounts(bankAccounts.filter((a) => a.id !== id));
+      setBankTransactions(bankTransactions.filter((t) => t.bankAccountId !== id));
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to unlink bank account";
+      setError(errorMessage);
+      throw err;
+    }
+  };
+
+  const syncBankAccount = async (id: string) => {
+    try {
+      setError(null);
+      const response = await fetch(`/api/bank-accounts/${id}/sync`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to sync bank account");
+      }
+
+      await fetchBankData();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to sync bank account";
+      setError(errorMessage);
+      throw err;
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -423,6 +521,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         expenses,
         income,
         needs,
+        bankAccounts,
+        bankTransactions,
         isLoading,
         error,
         addPocket,
@@ -438,7 +538,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         deleteExpense,
         deleteIncome,
         deleteNeed,
+        linkBankAccount,
+        unlinkBankAccount,
+        syncBankAccount,
         refreshData,
+        refreshBankData,
       }}
     >
       {children}

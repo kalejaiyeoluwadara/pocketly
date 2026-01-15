@@ -69,3 +69,36 @@ export interface Notification {
   updatedAt: string;
 }
 
+export interface BankAccount {
+  id: string;
+  userId: string;
+  monoAccountId: string;
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+  accountType?: string;
+  currency: string;
+  balance?: number;
+  isActive: boolean;
+  syncStatus: "active" | "expired" | "error";
+  lastSyncAt?: string;
+  lastError?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BankTransaction {
+  id: string;
+  userId: string;
+  bankAccountId: string;
+  monoTransactionId: string;
+  amount: number;
+  type: "credit" | "debit";
+  description: string;
+  category?: string;
+  date: string;
+  balance?: number;
+  reference?: string;
+  createdAt: string;
+  updatedAt: string;
+}

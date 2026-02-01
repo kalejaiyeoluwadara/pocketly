@@ -55,7 +55,9 @@ export async function GET() {
 
 /**
  * POST /api/bank-accounts
- * Initiate bank account linking - returns Mono Connect link
+ * This endpoint is no longer used for initiating bank account linking.
+ * The Mono Connect Widget is now used directly in the frontend.
+ * Keeping this for backward compatibility or alternative flows.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -66,83 +68,14 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse();
     }
 
-    const body = await request.json();
-    const validationError = validateRequest(body, ["redirectUrl"]);
-    if (validationError) {
-      return NextResponse.json({ error: validationError }, { status: 400 });
-    }
-
-    const { redirectUrl } = body;
-
-    // Generate Mono Connect link
-    // Mono requires customer to be an object with name and email
-    const connectResponse = await initiateAccountLinking(
+    return NextResponse.json(
       {
-        name: user.name || "User",
-        email: user.email,
+        error:
+          "This endpoint is deprecated. Please use the Mono Connect Widget in the frontend.",
       },
-      redirectUrl
+      { status: 400 }
     );
-
-    // Mono initiate endpoint returns the URL in data.mono_url
-    // Append public key to URL if not already present (needed for Connect widget)
-    const publicKey = process.env.MONO_PUBLIC_KEY;
-    const response = connectResponse as any;
-
-    // Check if response has a nested data object (some APIs wrap responses)
-    const responseData = response.data || response;
-
-    // Mono API returns the authorization URL in data.mono_url
-    let connectLink =
-      responseData.mono_url ||
-      response.mono_url ||
-      responseData.authorization_url ||
-      responseData.authLink ||
-      responseData.connect_url ||
-      responseData.url ||
-      responseData.link ||
-      responseData.auth_url ||
-      response.authorization_url ||
-      response.authLink ||
-      response.connect_url ||
-      response.url ||
-      response.link;
-
-    // Fallback: construct URL if Mono returns code instead of full URL
-    if (!connectLink && (responseData.code || response.code)) {
-      const code = responseData.code || response.code;
-      connectLink = `https://connect.withmono.com?code=${code}`;
-    }
-
-    // If still no link, check if there's a direct URL in the response
-    if (!connectLink) {
-      console.error("No connect link found in Mono response:", response);
-      throw new Error(
-        `No authorization URL received from Mono. Response: ${JSON.stringify(
-          response
-        )}`
-      );
-    }
-
-    // Append public key to URL if needed (for Connect widget to work)
-    if (
-      connectLink &&
-      publicKey &&
-      !connectLink.includes("key=") &&
-      !connectLink.includes("publicKey=")
-    ) {
-      const separator = connectLink.includes("?") ? "&" : "?";
-      connectLink = `${connectLink}${separator}key=${encodeURIComponent(
-        publicKey
-      )}`;
-    }
-
-    return NextResponse.json({
-      connectLink,
-      code: response.code,
-      id: response.id,
-    });
   } catch (error) {
-    return handleApiError(error, "Failed to initiate account linking");
+    return handleApiError(error, "Failed to process request");
   }
 }

@@ -12,15 +12,25 @@ if (!MONO_SECRET_KEY) {
 }
 
 export interface MonoAccount {
-  _id: string;
-  accountNumber: string;
-  accountName: string;
-  bank: {
+  _id?: string;
+  id?: string;
+  account_number?: string;
+  accountNumber?: string;
+  name?: string;
+  accountName?: string;
+  institution?: {
     name: string;
-    code: string;
+    bank_code?: string;
+    code?: string;
+    type?: string;
   };
-  type: string;
-  currency: string;
+  bank?: {
+    name: string;
+    code?: string;
+    bank_code?: string;
+  };
+  type?: string;
+  currency?: string;
   balance?: number;
 }
 
@@ -136,6 +146,7 @@ export async function initiateAccountLinking(
 
 /**
  * Exchange authorization code for account ID
+ * This is called after the Mono Connect Widget returns a code via onSuccess callback
  * @param code - Authorization code from Mono Connect callback
  * @returns Account ID
  */
@@ -143,6 +154,8 @@ export async function exchangeCodeForAccountId(code: string): Promise<string> {
   if (!MONO_SECRET_KEY) {
     throw new Error("MONO_SECRET_KEY is not configured");
   }
+
+  console.log("Exchanging code for account ID:", code);
 
   const response = await fetch(`${MONO_BASE_URL}/v2/accounts/auth`, {
     method: "POST",
@@ -156,11 +169,23 @@ export async function exchangeCodeForAccountId(code: string): Promise<string> {
     const error = await response
       .json()
       .catch(() => ({ message: "Unknown error" }));
+    console.error("Exchange code error:", error);
     throw new Error(error.message || `Mono API error: ${response.statusText}`);
   }
 
   const data = await response.json();
-  return data.id;
+  console.log("Exchange code response:", data);
+  
+  // Mono API returns the account ID in data.data.id (nested structure)
+  const accountId = data.data?.id || data.id;
+  
+  if (!accountId) {
+    console.error("No account ID in response:", data);
+    throw new Error("No account ID received from Mono");
+  }
+  
+  console.log("Successfully extracted account ID:", accountId);
+  return accountId;
 }
 
 /**
@@ -190,7 +215,19 @@ export async function getAccountInfo(
     throw new Error(error.message || `Mono API error: ${response.statusText}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  console.log("Get account info response:", JSON.stringify(data, null, 2));
+  
+  // Mono API may wrap the response in a data object
+  // Handle both { account: {...} } and { data: { account: {...} } }
+  const accountData = data.data || data;
+  
+  if (!accountData.account) {
+    console.error("No account data in response:", data);
+    throw new Error("Invalid account info response from Mono");
+  }
+  
+  return accountData;
 }
 
 /**
@@ -275,7 +312,11 @@ export async function getAccountBalance(accountId: string): Promise<number> {
   }
 
   const data = await response.json();
-  return data.balance || 0;
+  console.log("Get account balance response:", data);
+  
+  // Handle nested data structure: { data: { balance: 123 } } or { balance: 123 }
+  const balance = data.data?.balance ?? data.balance ?? 0;
+  return balance;
 }
 
 /**

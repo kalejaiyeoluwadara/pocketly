@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import moment from "moment";
 import { useApp } from "../context/AppContext";
 import EmptyState from "./EmptyState";
-import { PlusIcon } from "../icons";
 import { formatCurrency } from "../utils/currency";
 import { Expense } from "../types";
 
@@ -27,8 +26,6 @@ export default function ExpenseList({
   if (expenses.length === 0) {
     return (
       <EmptyState
-        icon={PlusIcon}
-        iconColor="red"
         title="No expenses yet"
         description="Start tracking your spending by adding your first expense!"
         onClick={onEmptyClick}

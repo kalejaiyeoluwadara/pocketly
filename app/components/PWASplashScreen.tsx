@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import Mascot from "./Mascot";
 
 interface PWASplashScreenProps {
   onComplete?: () => void;
@@ -55,25 +55,7 @@ export default function PWASplashScreen({
             }}
             className="relative"
           >
-            <motion.div
-              animate={{
-                scale: [1, 1.05, 1],
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              <Image
-                src="/images/wallet-icon.svg"
-                alt="Pocketly"
-                width={120}
-                height={120}
-                priority
-              />
-            </motion.div>
+            <Mascot mood="happy" size={140} />
           </motion.div>
 
           {/* App Name */}

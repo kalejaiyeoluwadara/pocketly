@@ -10,7 +10,7 @@ import BottomNav from "./components/BottomNav";
 import SideNav from "./components/SideNav";
 import LoadingModal from "./components/LoadingModal";
 import { formatCurrency } from "./utils/currency";
-import { PlusIcon, Eye, EyeOff, Shield } from "lucide-react";
+import { Eye, EyeOff, Shield } from "lucide-react";
 import Nav from "./components/Nav";
 import ContributionGraph from "./components/ContributionGraph";
 
@@ -59,8 +59,6 @@ export default function Home() {
         <div className="space-y-4">
           {pockets.length === 0 ? (
             <EmptyState
-              icon={PlusIcon}
-              iconColor="zinc"
               title="No pockets yet"
               description="Create your first pocket to start tracking your finances!"
               onClick={() => pocketFormRef.current?.open()}

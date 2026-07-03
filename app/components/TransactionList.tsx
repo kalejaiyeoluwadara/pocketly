@@ -6,7 +6,6 @@ import { BarChart3Icon } from "lucide-react";
 import TransactionItem from "./TransactionItem";
 import BalanceHistoryChart from "./BalanceHistoryChart";
 import EmptyState from "./EmptyState";
-import { FileTextIcon } from "../icons";
 
 interface Expense {
   id: string;
@@ -87,8 +86,6 @@ export default function TransactionList({
   if (pocketExpenses.length === 0 && pocketIncome.length === 0) {
     return (
       <EmptyState
-        icon={FileTextIcon}
-        iconColor="zinc"
         title="No transactions yet"
         description="Start tracking expenses and income for this pocket!"
       />

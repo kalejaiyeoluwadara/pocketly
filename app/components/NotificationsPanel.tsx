@@ -4,8 +4,10 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { X, Trash2, Check, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 import { Notification, NotificationType } from "../types";
 import moment from "moment";
+import ConfirmDialog from "./ConfirmDialog";
 
 interface NotificationsPanelProps {
   isOpen: boolean;
@@ -59,6 +61,7 @@ export default function NotificationsPanel({
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] =
     useState<NotificationCategory>("all");
+  const [notificationToDelete, setNotificationToDelete] = useState<string | null>(null);
   const { data: session } = useSession();
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasInitializedRef = useRef(false);
@@ -145,9 +148,11 @@ export default function NotificationsPanel({
         setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
         setUnreadCount(0);
         onUnreadCountChange?.(0);
+        toast.success("All notifications marked as read!");
       }
     } catch (error) {
       console.error("Failed to mark all as read:", error);
+      toast.error("Failed to mark notifications as read. Please try again.");
     }
   };
 
@@ -165,9 +170,13 @@ export default function NotificationsPanel({
           setUnreadCount(newUnreadCount);
           onUnreadCountChange?.(newUnreadCount);
         }
+        toast.success("Notification deleted successfully!");
       }
     } catch (error) {
       console.error("Failed to delete notification:", error);
+      toast.error("Failed to delete notification. Please try again.");
+    } finally {
+      setNotificationToDelete(null);
     }
   };
 
@@ -337,7 +346,7 @@ export default function NotificationsPanel({
                             )}
                             <button
                               onClick={() =>
-                                handleDeleteNotification(notification.id)
+                                setNotificationToDelete(notification.id)
                               }
                               className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors"
                               title="Delete"
@@ -356,6 +365,18 @@ export default function NotificationsPanel({
               </div>
             </div>
           </motion.div>
+
+          <ConfirmDialog
+            isOpen={!!notificationToDelete}
+            onClose={() => setNotificationToDelete(null)}
+            onConfirm={() => {
+              if (notificationToDelete) {
+                handleDeleteNotification(notificationToDelete);
+              }
+            }}
+            title="Delete Notification"
+            message="Are you sure you want to delete this notification? This cannot be undone."
+          />
         </>
       )}
     </AnimatePresence>

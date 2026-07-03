@@ -65,8 +65,6 @@ export default function AIInsights() {
   if (error) {
     return (
       <EmptyState
-        icon={AlertCircleIcon}
-        iconColor="red"
         title="Failed to load insights"
         description={error}
       />
@@ -76,8 +74,6 @@ export default function AIInsights() {
   if (!analysis) {
     return (
       <EmptyState
-        icon={BrainIcon}
-        iconColor="zinc"
         title="No insights available"
         description="Start tracking expenses to get personalized insights"
       />

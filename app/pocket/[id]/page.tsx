@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useApp } from "../../context/AppContext";
 import PocketHeader from "../../components/PocketHeader";
 import PocketBalanceCard from "../../components/PocketBalanceCard";
@@ -59,9 +60,14 @@ export default function PocketDetailPage() {
       isOpen: true,
       title: "Delete Pocket",
       message: `Are you sure you want to delete "${pocket.name}"? All transactions in this pocket will also be removed. This cannot be undone.`,
-      onConfirm: () => {
-        deletePocket(pocket.id);
-        router.push("/");
+      onConfirm: async () => {
+        try {
+          await deletePocket(pocket.id);
+          toast.success("Pocket deleted successfully!");
+          router.push("/");
+        } catch (error) {
+          toast.error("Failed to delete pocket. Please try again.");
+        }
       },
     });
   };
@@ -76,7 +82,14 @@ export default function PocketDetailPage() {
       isOpen: true,
       title: "Delete Expense",
       message: `Delete "${expense?.description || "this expense"}"? This will add ₦${expense?.amount.toLocaleString("en-NG", { minimumFractionDigits: 2 })} back to your pocket balance.`,
-      onConfirm: () => deleteExpense(expenseId),
+      onConfirm: async () => {
+        try {
+          await deleteExpense(expenseId);
+          toast.success("Expense deleted successfully!");
+        } catch (error) {
+          toast.error("Failed to delete expense. Please try again.");
+        }
+      },
     });
   };
 
@@ -86,7 +99,14 @@ export default function PocketDetailPage() {
       isOpen: true,
       title: "Delete Income",
       message: `Delete "${inc?.description || "this income"}"? This will subtract ₦${inc?.amount.toLocaleString("en-NG", { minimumFractionDigits: 2 })} from your pocket balance.`,
-      onConfirm: () => deleteIncome(incomeId),
+      onConfirm: async () => {
+        try {
+          await deleteIncome(incomeId);
+          toast.success("Income deleted successfully!");
+        } catch (error) {
+          toast.error("Failed to delete income. Please try again.");
+        }
+      },
     });
   };
 

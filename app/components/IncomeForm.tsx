@@ -6,6 +6,7 @@ import { PlusIcon, Loader2Icon } from "../icons";
 import { useApp } from "../context/AppContext";
 import { formatCurrency } from "../utils/currency";
 import { toast } from "sonner";
+import ResponsiveModal from "./ResponsiveModal";
 
 interface IncomeFormProps {
   defaultPocketId?: string;
@@ -75,23 +76,7 @@ export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
 
       <AnimatePresence>
         {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="fixed bottom-0 left-0 right-0 z-[60] rounded-t-3xl border-t border-zinc-200/50 bg-white/95 backdrop-blur-xl p-6 pb-20 shadow-elevated-lg dark:border-zinc-800/50 dark:bg-zinc-900/95"
-            >
-              <div className="flex justify-center mb-4">
-                <div className="h-1 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-              </div>
+          <ResponsiveModal onClose={() => setIsOpen(false)}>
               <div className="mb-6 flex items-center gap-3">
                 <div className="rounded-xl bg-emerald-600 p-2 dark:bg-emerald-500">
                   <PlusIcon size={20} className="text-white" />
@@ -184,8 +169,7 @@ export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
                   </motion.button>
                 </div>
               </form>
-            </motion.div>
-          </>
+          </ResponsiveModal>
         )}
       </AnimatePresence>
     </>

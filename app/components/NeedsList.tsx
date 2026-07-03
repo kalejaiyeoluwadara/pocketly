@@ -1,18 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import moment from "moment";
+import { toast } from "sonner";
 import { useApp } from "../context/AppContext";
 import { Priority } from "../types";
 import EmptyState from "./EmptyState";
+import Mascot from "./Mascot";
 import {
   AlertCircleIcon,
   CircleIcon,
   CheckCircleIcon,
-  PlusIcon,
 } from "../icons";
 import { formatCurrency } from "../utils/currency";
 import { TrashIcon } from "lucide-react";
+import ConfirmDialog from "./ConfirmDialog";
 
 const priorityConfig: Record<
   Priority,
@@ -40,12 +43,13 @@ interface NeedsListProps {
   onEmptyClick?: () => void;
 }
 
-export default function NeedsList({ 
+export default function NeedsList({
   needs: needsProp,
-  onEmptyClick 
+  onEmptyClick
 }: NeedsListProps = {}) {
   const { needs: contextNeeds, deleteNeed, toggleNeedCompletion } = useApp();
   const needs = needsProp || contextNeeds;
+  const [needToDelete, setNeedToDelete] = useState<{ id: string; title: string } | null>(null);
 
   const sortedNeeds = [...needs].sort((a, b) => {
     // Sort by completion status first, then by priority
@@ -56,11 +60,21 @@ export default function NeedsList({
     return priorityOrder[a.priority as keyof typeof priorityOrder] - priorityOrder[b.priority as keyof typeof priorityOrder];
   });
 
+  const handleConfirmDelete = async () => {
+    if (!needToDelete) return;
+    try {
+      await deleteNeed(needToDelete.id);
+      toast.success("Need deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete need. Please try again.");
+    } finally {
+      setNeedToDelete(null);
+    }
+  };
+
   if (needs.length === 0) {
     return (
       <EmptyState
-        icon={PlusIcon}
-        iconColor="amber"
         title="No needs yet"
         description="Add items you need to save for!"
         onClick={onEmptyClick}
@@ -68,8 +82,27 @@ export default function NeedsList({
     );
   }
 
+  const allCompleted = needs.every((need) => need.completed);
+
   return (
     <div className="space-y-2">
+      {allCompleted && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-2 flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/50 dark:bg-amber-950/20"
+        >
+          <Mascot mood="celebrating" size={56} />
+          <div>
+            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+              All needs sorted!
+            </p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              You&apos;ve saved for everything on your list.
+            </p>
+          </div>
+        </motion.div>
+      )}
       {sortedNeeds.map((need, index) => {
         const config = priorityConfig[need.priority as keyof typeof priorityConfig];
         const Icon = config.icon;
@@ -117,7 +150,7 @@ export default function NeedsList({
                 {formatCurrency(need.amount, true)}
               </span>
               <button
-                onClick={() => deleteNeed(need.id)}
+                onClick={() => setNeedToDelete({ id: need.id, title: need.title })}
                 className="rounded-lg px-2 py-1 text-xs text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-red-500 dark:hover:bg-zinc-800"
               >
                 <TrashIcon size={13} className="text-zinc-400 hover:text-red-500 dark:text-zinc-400 dark:hover:text-red-500" />
@@ -126,6 +159,14 @@ export default function NeedsList({
           </motion.div>
         );
       })}
+
+      <ConfirmDialog
+        isOpen={!!needToDelete}
+        onClose={() => setNeedToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Need"
+        message={`Are you sure you want to delete "${needToDelete?.title}"? This cannot be undone.`}
+      />
     </div>
   );
 }

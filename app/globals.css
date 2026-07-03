@@ -220,6 +220,27 @@ h3,
   70% { opacity: 1; }
   100% { transform: translate(var(--pop-x, 0), var(--pop-y, -50px)) scale(1); opacity: 0; }
 }
+@keyframes mascot-juggle {
+  0%, 100% { transform: translate(-34px, 14px); }
+  25% { transform: translate(0, -14px); }
+  50% { transform: translate(34px, 14px); }
+  75% { transform: translate(0, -14px); }
+}
+@keyframes mascot-eyes-follow {
+  0%, 100% { transform: translate(-4px, 2px); }
+  25% { transform: translate(0, -3px); }
+  50% { transform: translate(4px, 2px); }
+  75% { transform: translate(0, -3px); }
+}
+@keyframes mascot-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1.15) rotate(45deg); }
+}
+@keyframes mascot-toss {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  12% { transform: rotate(-14deg) translateY(-6px); }
+  30% { transform: rotate(4deg) translateY(0); }
+}
 @media (prefers-reduced-motion: reduce) {
   .mascot, .mascot * { animation: none !important; }
 }

@@ -25,7 +25,7 @@ export default function EmptyState({
           : ""
       }`}
     >
-      <Mascot mood="sleepy" size={100} className="mx-auto mb-2" />
+      <Mascot mood="waving" size={110} className="mx-auto mb-2" />
       <h3 className="mb-2 text-lg font-medium text-zinc-900 dark:text-zinc-50">
         {title}
       </h3>

@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export type MascotMood = "happy" | "sleepy" | "thinking" | "celebrating";
+export type MascotMood =
+  | "happy"
+  | "sleepy"
+  | "thinking"
+  | "celebrating"
+  | "counting"
+  | "waving";
 
 interface MascotProps {
   mood?: MascotMood;
@@ -22,6 +28,8 @@ const bodyAnim: Record<MascotMood, string> = {
   sleepy: "mascot-breathe 3s ease-in-out infinite",
   thinking: "mascot-sway 3.2s ease-in-out infinite",
   celebrating: "mascot-hop 1s ease-in-out infinite",
+  counting: "mascot-bob 2s ease-in-out infinite",
+  waving: "mascot-bob 1.8s ease-in-out infinite",
 };
 
 /**
@@ -39,7 +47,7 @@ export default function Mascot({
   const pupilsRef = useRef<SVGGElement>(null);
   const [burst, setBurst] = useState(0);
   const [tapped, setTapped] = useState(false);
-  const canTrack = interactive && mood !== "sleepy";
+  const canTrack = interactive && mood !== "sleepy" && mood !== "counting";
 
   // Cursor eye-tracking: direct DOM writes, rAF-throttled, zero re-renders.
   useEffect(() => {
@@ -203,12 +211,16 @@ export default function Mascot({
 
 function Arm({ side, mood }: { side: "left" | "right"; mood: MascotMood }) {
   const x = side === "left" ? 32 : 168;
-  const wave = mood === "celebrating";
+  const wave =
+    mood === "celebrating" || (mood === "waving" && side === "right");
+  const toss = mood === "counting";
   return (
     <g
       style={{
         animation: wave
           ? `mascot-wave 0.6s ease-in-out infinite ${side === "left" ? "" : "0.3s"}`
+          : toss
+          ? `mascot-toss 2s ease-in-out infinite ${side === "left" ? "" : "1s"}`
           : undefined,
         transformOrigin: `${x}px 130px`,
       }}
@@ -270,6 +282,26 @@ function Face({
         <path d="M114 134 L125 143 L136 134" stroke={INK} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
         <path d="M78 156 Q100 182 122 156 Q100 168 78 156 Z" fill={INK} />
         <Blush strong />
+      </>
+    );
+  }
+
+  // counting: eyes follow the juggled coin (CSS-driven)
+  if (mood === "counting") {
+    return (
+      <>
+        <g style={{ animation: "mascot-blink 4s ease-in-out infinite", transformOrigin: "100px 139px" }}>
+          <circle cx="75" cy="139" r="13" fill="white" />
+          <circle cx="125" cy="139" r="13" fill="white" />
+          <g style={{ animation: "mascot-eyes-follow 2s ease-in-out infinite" }}>
+            <circle cx="75" cy="139" r="6.5" fill={INK} />
+            <circle cx="125" cy="139" r="6.5" fill={INK} />
+            <circle cx="77.5" cy="136.5" r="2" fill="white" />
+            <circle cx="127.5" cy="136.5" r="2" fill="white" />
+          </g>
+        </g>
+        <ellipse cx="100" cy="162" rx="6" ry="4.5" fill={INK} opacity="0.85" />
+        <Blush />
       </>
     );
   }
@@ -345,6 +377,43 @@ function MoodExtras({ mood }: { mood: MascotMood }) {
             opacity={0.9 - i * 0.25}
             style={{ animation: `mascot-dot 1.2s ease-in-out ${i * 0.18}s infinite` }}
           />
+        ))}
+      </>
+    );
+  }
+
+  if (mood === "counting") {
+    return (
+      <g style={{ animation: "mascot-juggle 2s ease-in-out infinite" }}>
+        <g style={{ animation: "mascot-spin 1s linear infinite", transformOrigin: "100px 62px" }}>
+          <circle cx="100" cy="62" r="9" fill="url(#m-coin)" stroke={COIN_DARK} strokeWidth="1.5" />
+          <text x="100" y="66" textAnchor="middle" fontSize="10" fontWeight="800" fill={COIN_DARK}>
+            ₦
+          </text>
+        </g>
+      </g>
+    );
+  }
+
+  if (mood === "waving") {
+    return (
+      <>
+        {[
+          { x: 38, y: 52, s: 1, delay: 0 },
+          { x: 168, y: 40, s: 0.7, delay: 0.7 },
+          { x: 152, y: 88, s: 0.5, delay: 1.4 },
+        ].map((star, i) => (
+          <g key={i} transform={`translate(${star.x} ${star.y}) scale(${star.s})`}>
+            <path
+              d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"
+              fill={COIN}
+              style={{
+                animation: `mascot-twinkle 2.1s ease-in-out ${star.delay}s infinite`,
+                transformBox: "fill-box",
+                transformOrigin: "center",
+              }}
+            />
+          </g>
         ))}
       </>
     );

@@ -20,7 +20,7 @@ const item = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -101,7 +101,7 @@ export default function AuthPage() {
     "w-full rounded-xl border bg-zinc-100/70 py-3 pl-11 text-[15px] text-zinc-900 placeholder-zinc-400 transition-shadow duration-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/70 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed dark:bg-zinc-800/60 dark:text-zinc-50 dark:focus:bg-zinc-800";
 
   return (
-    <div className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
+    <div className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12 bg-zinc-50 dark:bg-black">
       {/* Ambient atmosphere */}
       <div
         aria-hidden

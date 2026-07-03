@@ -245,6 +245,18 @@ h3,
   .mascot, .mascot * { animation: none !important; }
 }
 
+/* Page arrival — pairs with useAnimatedNavigate's send-off */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-page-enter {
+  animation: page-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-enter { animation: none; }
+}
+
 /* Elevation — ink-tinted layered shadows instead of flat black */
 .shadow-elevated {
   box-shadow: 0 1px 2px rgb(24 23 19 / 0.05), 0 4px 8px -2px rgb(24 23 19 / 0.07),

@@ -13,12 +13,14 @@ import { formatCurrency } from "./utils/currency";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import Nav from "./components/Nav";
 import ContributionGraph from "./components/ContributionGraph";
+import { useAnimatedNavigate } from "./utils/useAnimatedNavigate";
 
 export default function Home() {
   const { pockets, isLoading } = useApp();
   const totalBalance = pockets.reduce((sum, pocket) => sum + pocket.balance, 0);
   const [showBalance, setShowBalance] = useState(true);
   const pocketFormRef = useRef<PocketFormRef>(null);
+  const { leavingKey, navigate } = useAnimatedNavigate();
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black lg:pb-6 lg:pl-56">
@@ -66,7 +68,13 @@ export default function Home() {
           ) : (
             <section className="grid grid-cols-1 gap-3 lg:grid-cols-2">
               {pockets.map((pocket) => (
-                <PocketCard key={pocket.id} pocket={pocket} />
+                <PocketCard
+                  key={pocket.id}
+                  pocket={pocket}
+                  onPress={navigate}
+                  leaving={leavingKey === pocket.id}
+                  dimmed={leavingKey !== null && leavingKey !== pocket.id}
+                />
               ))}
             </section>
           )}

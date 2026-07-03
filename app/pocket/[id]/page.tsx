@@ -121,7 +121,7 @@ export default function PocketDetailPage() {
   return (
     <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black lg:pb-6 lg:pl-56">
       <SideNav />
-      <div className="mx-auto max-w-md px-4 py-6 lg:max-w-4xl">
+      <div className="mx-auto max-w-md px-4 py-6 lg:max-w-4xl animate-page-enter">
         <div className="lg:grid lg:grid-cols-5 lg:gap-6">
           <div className="lg:col-span-2">
             <PocketHeader

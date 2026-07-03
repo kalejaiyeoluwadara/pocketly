@@ -14,6 +14,7 @@ import { Eye, EyeOff, Shield } from "lucide-react";
 import Nav from "./components/Nav";
 import ContributionGraph from "./components/ContributionGraph";
 import { useAnimatedNavigate } from "./utils/useAnimatedNavigate";
+import MascotBuddy from "./components/MascotBuddy";
 
 export default function Home() {
   const { pockets, isLoading } = useApp();
@@ -57,6 +58,8 @@ export default function Home() {
             </section>
           </div>
         </div>
+
+        <MascotBuddy />
 
         <div className="space-y-4">
           {pockets.length === 0 ? (

@@ -7,6 +7,7 @@ import PocketCard from "./components/PocketCard";
 import PocketForm, { PocketFormRef } from "./components/PocketForm";
 import EmptyState from "./components/EmptyState";
 import BottomNav from "./components/BottomNav";
+import SideNav from "./components/SideNav";
 import LoadingModal from "./components/LoadingModal";
 import { formatCurrency } from "./utils/currency";
 import { PlusIcon, Eye, EyeOff, Shield } from "lucide-react";
@@ -20,10 +21,11 @@ export default function Home() {
   const pocketFormRef = useRef<PocketFormRef>(null);
 
   return (
-    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
+    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black lg:pb-6 lg:pl-56">
       <LoadingModal isOpen={isLoading} />
+      <SideNav />
       <Nav />
-      <div className="mx-auto max-w-md px-4 py-6">
+      <div className="mx-auto max-w-md lg:max-w-4xl px-4 py-6">
         <div className="mb-8">
           <div className="rounded-2xl flex justify-between border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
             <section>
@@ -41,10 +43,7 @@ export default function Home() {
               <p className="font-medium text-zinc-900 dark:text-zinc-50">
                 {showBalance ? (
                   <span className="text-2xl">
-                    <span className="text-lg mr-[2px]">₦</span>
-                    {totalBalance
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    {formatCurrency(totalBalance)}
                   </span>
                 ) : (
                   <span className="text-2xl">****</span>
@@ -67,7 +66,7 @@ export default function Home() {
               onClick={() => pocketFormRef.current?.open()}
             />
           ) : (
-            <section className="flex flex-col gap-2">
+            <section className="grid grid-cols-1 gap-3 lg:grid-cols-2">
               {pockets.map((pocket) => (
                 <PocketCard key={pocket.id} pocket={pocket} />
               ))}

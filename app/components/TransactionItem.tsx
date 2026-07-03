@@ -66,7 +66,7 @@ export default function TransactionItem({
           <p className="font-medium text-sm text-zinc-900 dark:text-zinc-50">
             {transaction.description}
           </p>
-          <p className="text-[8px] text-zinc-500 dark:text-zinc-400">
+          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
             {moment(transaction.createdAt).format("MMM D, YYYY")}
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function TransactionItem({
               : "text-red-600"
           }`}
         >
-          {formatCurrency(transaction.amount, "6px")}
+          {formatCurrency(transaction.amount, true)}
         </span>
         <div className="relative" data-transaction-dropdown>
           <motion.button

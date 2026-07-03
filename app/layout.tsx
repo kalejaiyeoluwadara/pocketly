@@ -46,7 +46,7 @@ export default function RootLayout({
             <PWAInstallPrompt />
           </AppProvider>
         </Providers>
-        <Toaster position="top-right" richColors={false} />
+        <Toaster position="bottom-center" richColors={false} />
         <Analytics />
       </body>
     </html>

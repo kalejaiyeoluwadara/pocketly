@@ -104,17 +104,17 @@ export default function NeedsList({
                   {need.title}
                 </p>
                 <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-                  <span className={`text-[8px] font-medium ${config.color}`}>
+                  <span className={`text-[10px] font-medium ${config.color}`}>
                     {config.label}
                   </span>
                   <span>•</span>
-                  <span className="text-[8px]">{moment(need.createdAt).format("MMM D, YYYY")}</span>
+                  <span className="text-[10px]">{moment(need.createdAt).format("MMM D, YYYY")}</span>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <span className={`text-sm font-medium ${need.completed ? "line-through text-zinc-500 dark:text-zinc-500" : "text-zinc-900 dark:text-zinc-50"}`}>
-                {formatCurrency(need.amount, "6px")}
+                {formatCurrency(need.amount, true)}
               </span>
               <button
                 onClick={() => deleteNeed(need.id)}

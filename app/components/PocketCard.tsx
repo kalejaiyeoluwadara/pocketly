@@ -63,7 +63,7 @@ export default function PocketCard({ pocket }: PocketCardProps) {
               <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
                 {pocket.name}
               </h3>
-              <p className="text-[6px] text-zinc-500 dark:text-zinc-400">
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
                 {moment(pocket.createdAt).format("MMM D, YYYY")}
               </p>
             </div>

@@ -6,6 +6,7 @@ import { useApp } from "../context/AppContext";
 import ExpenseForm, { ExpenseFormRef } from "../components/ExpenseForm";
 import ExpenseList from "../components/ExpenseList";
 import BottomNav from "../components/BottomNav";
+import SideNav from "../components/SideNav";
 import { formatCurrency } from "../utils/currency";
 import Nav from "../components/Nav";
 import { Calendar, Search } from "lucide-react";
@@ -104,9 +105,10 @@ export default function ExpensesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
+    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black lg:pb-6 lg:pl-56">
+      <SideNav />
       <Nav />
-      <div className="mx-auto max-w-md px-4 pt-3 pb-6">
+      <div className="mx-auto max-w-md lg:max-w-3xl px-4 pt-3 pb-6">
         <div className="mb-6">
           <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
             <div className="flex items-center justify-between mb-1">
@@ -120,8 +122,7 @@ export default function ExpensesPage() {
             </div>
             <p className="font-medium text-red-500">
               <span className="text-2xl">
-                <span className="text-lg mr-[2px]">₦</span>
-                {totalExpenses.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                {formatCurrency(totalExpenses)}
               </span>
             </p>
             <div className="mt-4 flex items-start justify-start">

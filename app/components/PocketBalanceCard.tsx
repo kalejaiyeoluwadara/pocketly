@@ -49,13 +49,13 @@ export default function PocketBalanceCard({ pocket, totalIncome, totalSpent }: P
             Total Income
           </p>
           <p className="text-xs font-medium text-emerald-500 text-right">
-            {formatCurrency(totalIncome, "6px")}
+            {formatCurrency(totalIncome, true)}
           </p>
           <p className="mb-2 mt-4 text-xs text-right font-medium text-zinc-500 dark:text-zinc-400">
             Total Spent
           </p>
           <p className="text-xs font-medium text-red-500 text-right">
-            {formatCurrency(totalSpent, "6px")}
+            {formatCurrency(totalSpent, true)}
           </p>
         </div>
       </div>

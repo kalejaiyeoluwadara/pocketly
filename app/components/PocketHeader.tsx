@@ -57,7 +57,7 @@ export default function PocketHeader({ pocket, onUpdateClick, onDelete }: Pocket
       <motion.button
         whileHover={{ x: -2 }}
         whileTap={{ scale: 0.98 }}
-        onClick={() => router.back()}
+        onClick={() => router.push("/")}
         className="mb-6 flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
       >
         <ChevronLeftIcon
@@ -73,7 +73,7 @@ export default function PocketHeader({ pocket, onUpdateClick, onDelete }: Pocket
               <h1 className="text-xl font-medium text-zinc-900 dark:text-zinc-50">
                 {pocket.name}
               </h1>
-              <p className="text-[9px] text-zinc-500 dark:text-zinc-400">
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
                 Created {moment(pocket.createdAt).format("MMM D, YYYY")}
               </p>
             </div>

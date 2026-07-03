@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "recharts";
 import moment from "moment";
-import { formatCurrency } from "../utils/currency";
+import { formatCurrencyString } from "../utils/currency";
 
 interface Expense {
   id: string;
@@ -41,13 +41,7 @@ interface BalanceHistoryChartProps {
   income: Income[];
 }
 
-// Helper function to format currency as string for Y-axis labels
-function formatCurrencyString(amount: number): string {
-  const formattedAmount = amount
-    .toFixed(2)
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return `₦${formattedAmount}`;
-}
+
 
 export default function BalanceHistoryChart({
   pocket,
@@ -138,10 +132,11 @@ export default function BalanceHistoryChart({
               
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "black",
-                  border: "1px solid #e5e7eb",
+                  backgroundColor: "var(--background)",
+                  border: "1px solid rgba(128, 128, 128, 0.2)",
                   borderRadius: "8px",
                   fontSize: "12px",
+                  color: "var(--foreground)",
                 }}
                 labelFormatter={(label, payload) => {
                   if (payload && payload[0]) {
@@ -152,7 +147,7 @@ export default function BalanceHistoryChart({
                   return label;
                 }}
                 formatter={(value: number | undefined) => [
-                  formatCurrency(value ?? 0),
+                  formatCurrencyString(value ?? 0),
                   "Balance",
                 ]}
               />

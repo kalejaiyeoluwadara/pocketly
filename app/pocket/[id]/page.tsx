@@ -9,6 +9,9 @@ import TransactionList from "../../components/TransactionList";
 import UpdatePocketModal from "../../components/UpdatePocketModal";
 import UpdateExpenseModal from "../../components/UpdateExpenseModal";
 import UpdateIncomeModal from "../../components/UpdateIncomeModal";
+import BottomNav from "../../components/BottomNav";
+import SideNav from "../../components/SideNav";
+import ConfirmDialog from "../../components/ConfirmDialog";
 
 export default function PocketDetailPage() {
   const params = useParams();
@@ -28,10 +31,17 @@ export default function PocketDetailPage() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<string | null>(null);
   const [editingIncome, setEditingIncome] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({ isOpen: false, title: "", message: "", onConfirm: () => {} });
 
   if (!pocket) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-50 pb-20 dark:bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50 pb-20 dark:bg-black lg:pb-6 lg:pl-56">
+        <SideNav />
         <div className="mx-auto max-w-md px-4 py-6">
           <p className="text-zinc-500 dark:text-zinc-400">Pocket not found</p>
         </div>
@@ -45,10 +55,15 @@ export default function PocketDetailPage() {
   const totalIncome = pocketIncome.reduce((sum, i) => sum + i.amount, 0);
 
   const handleDeletePocket = () => {
-    if (confirm("Are you sure you want to delete this pocket?")) {
-      deletePocket(pocket.id);
-      router.push("/");
-    }
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete Pocket",
+      message: `Are you sure you want to delete "${pocket.name}"? All transactions in this pocket will also be removed. This cannot be undone.`,
+      onConfirm: () => {
+        deletePocket(pocket.id);
+        router.push("/");
+      },
+    });
   };
 
   const handleUpdatePocketClick = () => {
@@ -56,15 +71,23 @@ export default function PocketDetailPage() {
   };
 
   const handleDeleteExpense = (expenseId: string) => {
-    if (confirm("Are you sure you want to delete this expense?")) {
-      deleteExpense(expenseId);
-    }
+    const expense = pocketExpenses.find((e) => e.id === expenseId);
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete Expense",
+      message: `Delete "${expense?.description || "this expense"}"? This will add ₦${expense?.amount.toLocaleString("en-NG", { minimumFractionDigits: 2 })} back to your pocket balance.`,
+      onConfirm: () => deleteExpense(expenseId),
+    });
   };
 
   const handleDeleteIncome = (incomeId: string) => {
-    if (confirm("Are you sure you want to delete this income?")) {
-      deleteIncome(incomeId);
-    }
+    const inc = pocketIncome.find((i) => i.id === incomeId);
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete Income",
+      message: `Delete "${inc?.description || "this income"}"? This will subtract ₦${inc?.amount.toLocaleString("en-NG", { minimumFractionDigits: 2 })} from your pocket balance.`,
+      onConfirm: () => deleteIncome(incomeId),
+    });
   };
 
   const handleUpdateExpenseClick = (expenseId: string) => {
@@ -76,29 +99,36 @@ export default function PocketDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black">
-      <div className="mx-auto max-w-md px-4 py-6">
-        <PocketHeader
-          pocket={pocket}
-          onUpdateClick={handleUpdatePocketClick}
-          onDelete={handleDeletePocket}
-        />
+    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black lg:pb-6 lg:pl-56">
+      <SideNav />
+      <div className="mx-auto max-w-md px-4 py-6 lg:max-w-4xl">
+        <div className="lg:grid lg:grid-cols-5 lg:gap-6">
+          <div className="lg:col-span-2">
+            <PocketHeader
+              pocket={pocket}
+              onUpdateClick={handleUpdatePocketClick}
+              onDelete={handleDeletePocket}
+            />
 
-        <PocketBalanceCard
-          pocket={pocket}
-          totalIncome={totalIncome}
-          totalSpent={totalSpent}
-        />
+            <PocketBalanceCard
+              pocket={pocket}
+              totalIncome={totalIncome}
+              totalSpent={totalSpent}
+            />
+          </div>
 
-        <TransactionList
-          pocket={pocket}
-          expenses={expenses}
-          income={income}
-          onUpdateExpenseClick={handleUpdateExpenseClick}
-          onDeleteExpenseClick={handleDeleteExpense}
-          onUpdateIncomeClick={handleUpdateIncomeClick}
-          onDeleteIncomeClick={handleDeleteIncome}
-        />
+          <div className="lg:col-span-3">
+            <TransactionList
+              pocket={pocket}
+              expenses={expenses}
+              income={income}
+              onUpdateExpenseClick={handleUpdateExpenseClick}
+              onDeleteExpenseClick={handleDeleteExpense}
+              onUpdateIncomeClick={handleUpdateIncomeClick}
+              onDeleteIncomeClick={handleDeleteIncome}
+            />
+          </div>
+        </div>
 
         <UpdatePocketModal
           isOpen={isUpdateModalOpen}
@@ -124,7 +154,16 @@ export default function PocketDetailPage() {
             onUpdate={updateIncome}
           />
         )}
+
+        <ConfirmDialog
+          isOpen={confirmDialog.isOpen}
+          onClose={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+          onConfirm={confirmDialog.onConfirm}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+        />
       </div>
+      <BottomNav />
     </div>
   );
 }

@@ -1,30 +1,28 @@
 /**
- * Formats a number as Nigerian Naira currency
+ * Formats a number as Nigerian Naira currency string
  * @param amount - The amount to format
- * @returns JSX element with ₦ symbol in smaller font (e.g., "₦1,234.56")
+ * @returns Formatted string like "₦1,234.56"
  */
-export function formatCurrency(amount: number, fontSize: string = "14px"): JSX.Element {
+export function formatCurrencyString(amount: number): string {
+  const formattedAmount = amount
+    .toFixed(2)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `₦${formattedAmount}`;
+}
+
+/**
+ * Formats a number as Nigerian Naira currency JSX
+ * @param amount - The amount to format
+ * @param smallSymbol - If true, renders ₦ slightly smaller than the amount
+ * @returns JSX element with ₦ symbol (e.g., "₦1,234.56")
+ */
+export function formatCurrency(amount: number, smallSymbol: boolean = false): JSX.Element {
   const formattedAmount = amount
     .toFixed(2)
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return (
     <>
-      <span className={`text-[${fontSize}] mr-[2px]`}>₦</span>
-      {formattedAmount}
-    </>
-  );
-}
-
-/**
- * Formats a number as Nigerian Naira currency without comma separators
- * @param amount - The amount to format
- * @returns JSX element with ₦ symbol in smaller font (e.g., "₦1234.56")
- */
-export function formatCurrencySimple(amount: number): JSX.Element {
-  const formattedAmount = amount.toFixed(2);
-  return (
-    <>
-      <span className="text-[0.85em]">₦</span>
+      <span className={smallSymbol ? "text-[0.8em] mr-[1px]" : ""}>₦</span>
       {formattedAmount}
     </>
   );

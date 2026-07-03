@@ -216,8 +216,21 @@ export default function ContributionGraph() {
             onChange={(e) => setSelectedYear(parseInt(e.target.value))}
             className="rounded-lg border border-zinc-200 bg-white px-3 py-1 text-sm text-zinc-900 focus:border-zinc-400 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:border-zinc-600"
           >
-            <option value={2025}>2025</option>
-            <option value={2026}>2026</option>
+            {(() => {
+              const currentYear = new Date().getFullYear();
+              const allDates = [
+                ...expenses.map((e) => new Date(e.createdAt).getFullYear()),
+                ...income.map((i) => new Date(i.createdAt).getFullYear()),
+              ];
+              const earliestYear = allDates.length > 0 ? Math.min(...allDates) : currentYear;
+              const years = [];
+              for (let y = earliestYear; y <= currentYear; y++) {
+                years.push(y);
+              }
+              return years.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ));
+            })()}
           </select>
         </div>
       </div>

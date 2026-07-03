@@ -268,6 +268,37 @@ h3,
   .buddy-wander, .buddy-face { animation: none; }
 }
 
+/* Streak flame — burning flicker */
+@keyframes flame-flicker {
+  0%, 100% { transform: scaleY(1) scaleX(1); }
+  30% { transform: scaleY(1.08) scaleX(0.93) skewX(-2deg); }
+  60% { transform: scaleY(0.94) scaleX(1.06) skewX(2.5deg); }
+  80% { transform: scaleY(1.04) scaleX(0.97) skewX(-1deg); }
+}
+@keyframes flame-ember-rise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-6px) scale(0.4); opacity: 0; }
+}
+.flame-lick {
+  animation: flame-flicker 0.9s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.flame-core {
+  animation: flame-flicker 0.65s ease-in-out infinite reverse;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.flame-ember {
+  animation: flame-ember-rise 1.8s ease-out infinite;
+  transform-box: fill-box;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flame-lick, .flame-core, .flame-ember { animation: none; }
+  .flame-ember { opacity: 0; }
+}
+
 /* Page arrival — pairs with useAnimatedNavigate's send-off */
 @keyframes page-enter {
   from { opacity: 0; transform: translateY(14px) scale(0.985); }

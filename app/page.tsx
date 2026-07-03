@@ -24,11 +24,12 @@ export default function Home() {
   const { leavingKey, navigate } = useAnimatedNavigate();
 
   return (
-    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black lg:pb-6 lg:pl-56">
+    <div className="min-h-screen bg-zinc-50 pb-28 dark:bg-black lg:pb-6 lg:pl-56">
       <LoadingModal isOpen={isLoading} />
       <SideNav />
       <Nav />
       <div className="mx-auto max-w-md lg:max-w-4xl px-4 py-6">
+        <MascotBuddy />
         <div className="mb-8">
           <div className="rounded-2xl flex justify-between border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
             <section>
@@ -58,8 +59,6 @@ export default function Home() {
             </section>
           </div>
         </div>
-
-        <MascotBuddy />
 
         <div className="space-y-4">
           {pockets.length === 0 ? (

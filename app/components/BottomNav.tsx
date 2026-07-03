@@ -16,8 +16,11 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200/50 bg-white/90 backdrop-blur-xl shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900/90 lg:hidden">
-      <div className="mx-auto flex max-w-md items-center justify-around px-4 py-3">
+    <nav
+      className="fixed left-1/2 z-50 -translate-x-1/2 lg:hidden"
+      style={{ bottom: "max(1rem, env(safe-area-inset-bottom))" }}
+    >
+      <div className="flex items-center gap-1 rounded-full border border-zinc-200/60 bg-white/85 p-1.5 shadow-elevated-lg backdrop-blur-xl dark:border-zinc-700/60 dark:bg-zinc-900/85">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -26,31 +29,36 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="relative flex flex-1 flex-col items-center gap-1 py-2 transition-colors"
+              aria-label={item.label}
+              onClick={() => navigator.vibrate?.(8)}
+              className="relative flex h-11 items-center justify-center rounded-full px-3.5"
             >
               {isActive && (
-                <motion.div
+                <motion.span
                   layoutId="activeTab"
-                  className="absolute inset-0 mx-auto w-14 rounded-xl bg-zinc-100 dark:bg-zinc-800"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  className="absolute inset-0 rounded-full bg-zinc-900 shadow-sm dark:bg-zinc-100"
+                  transition={{ type: "spring", bounce: 0.25, duration: 0.55 }}
                 />
               )}
-              <Icon
-                size={20}
-                className={`relative z-10 transition-colors ${
-                  isActive
-                    ? "text-zinc-900 dark:text-zinc-50"
-                    : "text-zinc-400 dark:text-zinc-600"
-                }`}
-              />
-              <span
-                className={`relative z-10 text-xs font-medium transition-colors ${
-                  isActive
-                    ? "text-zinc-900 dark:text-zinc-50"
-                    : "text-zinc-400 dark:text-zinc-600"
-                }`}
-              >
-                {item.label}
+              <span className="relative z-10 flex items-center gap-1.5">
+                <Icon
+                  size={19}
+                  className={`transition-colors duration-200 ${
+                    isActive
+                      ? "text-white dark:text-zinc-900"
+                      : "text-zinc-400 dark:text-zinc-500"
+                  }`}
+                />
+                {isActive && (
+                  <motion.span
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1, duration: 0.2 }}
+                    className="text-xs font-semibold text-white dark:text-zinc-900"
+                  >
+                    {item.label}
+                  </motion.span>
+                )}
               </span>
             </Link>
           );
@@ -59,4 +67,3 @@ export default function BottomNav() {
     </nav>
   );
 }
-

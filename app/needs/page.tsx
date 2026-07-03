@@ -42,7 +42,7 @@ export default function NeedsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-black lg:pb-6 lg:pl-56">
+    <div className="min-h-screen bg-zinc-50 pb-28 dark:bg-black lg:pb-6 lg:pl-56">
       <SideNav />
       <Nav />
       <div className="mx-auto max-w-md lg:max-w-3xl px-4 pt-3 pb-6">

@@ -5,7 +5,7 @@ import { Bell, LogOut, User } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import LogoutModal from "./LogoutModal";
 import NotificationsPanel from "./NotificationsPanel";
-import { FlameIcon } from "../icons";
+import { StreakFlameIcon } from "../icons";
 import Image from "next/image";
 function Nav() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -116,11 +116,7 @@ function Nav() {
         <section className="flex items-center gap-2">
           {currentStreak > 0 && (
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/30  dark:border-orange-900/50">
-              <FlameIcon
-                size={18}
-                className="text-orange-500 dark:text-orange-400"
-                fill="currentColor"
-              />
+              <StreakFlameIcon size={19} />
               <span className="text-sm font-semibold text-orange-600 dark:text-orange-400">
                 {currentStreak}
               </span>

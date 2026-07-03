@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import moment from "moment";
-import { WalletIcon } from "../icons";
+import { PocketPouchIcon } from "../icons";
 import { Pocket } from "../types";
 import { ChevronRightIcon } from "lucide-react";
 
@@ -18,30 +18,17 @@ interface PocketCardProps {
   dimmed?: boolean;
 }
 
-// Generate a color based on pocket name for consistency
-const getColorClasses = (name: string) => {
-  const colors = [
-    {
-      bg: "bg-indigo-500",
-      text: "text-indigo-500",
-      border: "border-indigo-500",
-    },
-    { bg: "bg-blue-500", text: "text-blue-500", border: "border-blue-500" },
-    {
-      bg: "bg-emerald-500",
-      text: "text-emerald-500",
-      border: "border-emerald-500",
-    },
-    { bg: "bg-amber-500", text: "text-amber-500", border: "border-amber-500" },
-    { bg: "bg-pink-500", text: "text-pink-500", border: "border-pink-500" },
-    {
-      bg: "bg-violet-500",
-      text: "text-violet-500",
-      border: "border-violet-500",
-    },
+// Consistent per-pocket accent, derived from the name
+const getAccent = (name: string) => {
+  const accents = [
+    { tile: "from-indigo-400 to-indigo-600", wash: "bg-indigo-500", border: "border-indigo-500" },
+    { tile: "from-blue-400 to-blue-600", wash: "bg-blue-500", border: "border-blue-500" },
+    { tile: "from-emerald-400 to-emerald-600", wash: "bg-emerald-500", border: "border-emerald-500" },
+    { tile: "from-amber-400 to-amber-600", wash: "bg-amber-500", border: "border-amber-500" },
+    { tile: "from-pink-400 to-pink-600", wash: "bg-pink-500", border: "border-pink-500" },
+    { tile: "from-violet-400 to-violet-600", wash: "bg-violet-500", border: "border-violet-500" },
   ];
-  const index = name.charCodeAt(0) % colors.length;
-  return colors[index];
+  return accents[name.charCodeAt(0) % accents.length];
 };
 
 export default function PocketCard({
@@ -51,12 +38,12 @@ export default function PocketCard({
   dimmed = false,
 }: PocketCardProps) {
   const isNegative = pocket.balance < 0;
-  const colors = getColorClasses(pocket.name);
+  const accent = getAccent(pocket.name);
   const href = `/pocket/${pocket.id}`;
 
   const card = (
     <motion.div
-      whileHover={!leaving && !dimmed ? { scale: 1.02, y: -2 } : {}}
+      whileHover={!leaving && !dimmed ? { y: -2 } : {}}
       whileTap={!leaving ? { scale: 0.97 } : {}}
       animate={
         leaving
@@ -70,20 +57,22 @@ export default function PocketCard({
           : { opacity: 1, scale: 1 }
       }
       onClick={onPress ? () => onPress(pocket.id, href) : undefined}
-      className={`group relative overflow-visible rounded-xl border bg-white p-3 shadow-elevated transition-shadow duration-300 dark:bg-zinc-900 ${
+      className={`group relative rounded-2xl border bg-white p-4 shadow-elevated transition-shadow duration-300 dark:bg-zinc-900 ${
         leaving
-          ? `${colors.border} shadow-elevated-lg`
+          ? `${accent.border} shadow-elevated-lg`
           : "border-zinc-200/50 hover:shadow-elevated-lg dark:border-zinc-800/50"
       } ${onPress ? "cursor-pointer" : ""}`}
     >
-      <div className="absolute inset-0 overflow-hidden rounded-xl">
-        {/* Colored accent bar */}
-        <div className={`absolute left-0 top-0 h-full w-1 ${colors.bg}`} />
+      {/* soft color wash bleeding from the pouch's corner */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+        <div
+          className={`absolute -left-6 -top-6 h-20 w-20 rounded-full ${accent.wash} opacity-[0.08] blur-xl transition-opacity duration-300 group-hover:opacity-[0.16]`}
+        />
       </div>
 
-      {/* coins tipping out of the pocket on departure */}
+      {/* coins tipping out on departure */}
       {leaving && (
-        <div className="pointer-events-none absolute left-4 top-0 z-10">
+        <div className="pointer-events-none absolute left-6 top-0 z-10">
           {[0, 1, 2].map((i) => (
             <motion.span
               key={i}
@@ -101,49 +90,48 @@ export default function PocketCard({
         </div>
       )}
 
-      <div className="relative flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="relative flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <motion.div
             animate={
               leaving ? { rotate: [0, -12, 10, 0], scale: [1, 1.25, 1.1] } : {}
             }
             transition={{ duration: 0.45 }}
-            className={`relative rounded-md ${colors.bg} p-2 transition-transform duration-300 group-hover:scale-110`}
+            className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${accent.tile} shadow-sm transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3`}
           >
-            <WalletIcon size={14} className="text-white" />
+            <PocketPouchIcon size={24} className="text-white" />
           </motion.div>
-          <div>
-            <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+          <div className="min-w-0">
+            <h3 className="truncate font-display text-[15px] font-semibold text-zinc-900 dark:text-zinc-50">
               {pocket.name}
             </h3>
-            <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
-              {moment(pocket.createdAt).format("MMM D, YYYY")}
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+              Since {moment(pocket.createdAt).format("MMM D, YYYY")}
             </p>
           </div>
         </div>
-        <div className="text-right">
+
+        <div className="flex shrink-0 items-center">
           <p
-            className={`text-sm font-medium flex items-center  transition-colors ${
+            className={`font-display text-[17px] font-bold tracking-tight ${
               isNegative ? "text-red-500" : "text-zinc-900 dark:text-zinc-50"
             }`}
           >
-            <span className="text-[11px] mt-[2px] mr-1">₦</span>{" "}
-            <span>
-              {pocket.balance.toLocaleString("en-NG", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
+            <span className="mr-0.5 align-[2px] text-[11px] font-semibold text-zinc-400 dark:text-zinc-500">
+              ₦
             </span>
-            <motion.span
-              animate={leaving ? { x: [0, 8], opacity: [1, 0] } : {}}
-              transition={{ duration: 0.3, delay: 0.1 }}
-            >
-              <ChevronRightIcon
-                size={16}
-                className="text-zinc-500   ml-1 dark:text-zinc-400"
-              />
-            </motion.span>
+            {pocket.balance.toLocaleString("en-NG", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </p>
+          <motion.span
+            animate={leaving ? { x: [0, 8], opacity: [1, 0] } : {}}
+            transition={{ duration: 0.3, delay: 0.1 }}
+            className="-mr-1 ml-0.5 text-zinc-300 transition-all duration-300 group-hover:ml-1.5 group-hover:text-zinc-500 dark:text-zinc-600 dark:group-hover:text-zinc-400"
+          >
+            <ChevronRightIcon size={16} />
+          </motion.span>
         </div>
       </div>
     </motion.div>

@@ -7,15 +7,16 @@ import { useApp } from "../context/AppContext";
 
 const TAP_LINES = [
   "Hehe, that tickles!",
-  "Coins secured 🔒",
+  "Coins secured.",
   "Careful, I'm full of money!",
-  "Do that again 😄",
+  "Do that again!",
+  "You sabi press person belle!",
 ];
 
 /**
- * A small, restless Pocket who paces the strip and chats about your money.
- * Wandering is one CSS animation (transform only); the only JS is the
- * message rotation timer.
+ * A small, restless Pocket who paces his stage, stops to juggle a coin,
+ * and gists about your money. Walking is one CSS animation (transform
+ * only); JS only flips lightweight state on slow timers.
  */
 export default function MascotBuddy() {
   const { pockets, expenses, income, needs } = useApp();
@@ -23,10 +24,12 @@ export default function MascotBuddy() {
   const walkerRef = useRef<HTMLDivElement>(null);
   const [msgIndex, setMsgIndex] = useState(0);
   const [tapLine, setTapLine] = useState<string | null>(null);
+  const [onBreak, setOnBreak] = useState(false);
   const tapCount = useRef(0);
 
   const totalBalance = pockets.reduce((s, p) => s + p.balance, 0);
   const today = new Date();
+  const hour = today.getHours();
   const dayOfMonth = today.getDate();
   const todaySpent = expenses
     .filter((e) => new Date(e.createdAt).toDateString() === today.toDateString())
@@ -38,35 +41,39 @@ export default function MascotBuddy() {
 
   // Nigerian money-gist, tuned to the calendar and the user's own numbers
   const lines = [
-    "Every ₦ counts — I'm guarding them all 👀",
+    hour < 12
+      ? "Morning! Make today's money make sense"
+      : hour < 17
+      ? "Afternoon check-in — how your pocket dey?"
+      : "Evening o! Come make we count today's money",
     todaySpent > 0
-      ? `₦${todaySpent.toLocaleString()} don comot today. I dey watch o 📝`
-      : "You never spend today? Discipline! 🫡",
+      ? `₦${todaySpent.toLocaleString()} don comot today. I dey watch o`
+      : "You never spend today? Discipline!",
     // salary-week gist (25th → 3rd)
     ...(dayOfMonth >= 25
       ? [
-          "Salary week loading... hold strong, we dey almost there 💪",
-          "End of month vibes — no let detty December budget catch you.",
+          "Salary week loading... hold strong, we dey almost there",
+          "End of month vibes — budget no go beat us this time.",
         ]
       : dayOfMonth <= 3
       ? [
-          "Alert don land? Abeg feed your pockets first 💸",
+          "Alert don land? Abeg feed your pockets first",
           "New month, new budget. Make we plan am well!",
         ]
       : dayOfMonth >= 12 && dayOfMonth <= 18
-      ? ["Mid-month check: how far with the budget? 🧐"]
+      ? ["Mid-month check: how far with the budget?"]
       : []),
     daysSinceIncome !== null && daysSinceIncome > 14
-      ? "Income side don quiet small... any gist? 👀"
+      ? "Income side don quiet small... any gist?"
       : "Money wey enter must rest before e comot. House rule!",
     pendingNeeds.length > 0
       ? `${pendingNeeds.length} thing${pendingNeeds.length > 1 ? "s" : ""} still dey your needs list. We go buy am!`
-      : "Needs list clear. Odogwu behavior! 🏆",
+      : "Needs list clear. Odogwu behavior!",
     pockets.length > 1
       ? `${pockets.length} pockets, one very organized human.`
       : "One pocket? Create more — separate money no dey mix gist.",
     totalBalance > 0
-      ? "Your balance dey look comfy inside here 💅"
+      ? "Your balance dey look comfy inside here"
       : "E go better — we go bounce back. I believe in us!",
     "Small small savings dey grow big. Trust me, na me dey hold am.",
     "Log am the moment you spend am. Future you go thank you.",
@@ -80,7 +87,7 @@ export default function MascotBuddy() {
       if (!track || !walker) return;
       walker.style.setProperty(
         "--wander-x",
-        `${Math.max(track.clientWidth - 72, 0)}px`
+        `${Math.max(track.clientWidth - 76, 0)}px`
       );
     };
     setWander();
@@ -88,9 +95,23 @@ export default function MascotBuddy() {
     return () => window.removeEventListener("resize", setWander);
   }, []);
 
+  // rotate gist
   useEffect(() => {
     const id = setInterval(() => setMsgIndex((i) => i + 1), 5000);
     return () => clearInterval(id);
+  }, []);
+
+  // pace for a while, stop for a coin-juggling break, repeat
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const cycle = (breaking: boolean) => {
+      timer = setTimeout(() => {
+        setOnBreak(breaking);
+        cycle(!breaking);
+      }, breaking ? 10000 : 4500);
+    };
+    cycle(true);
+    return () => clearTimeout(timer);
   }, []);
 
   const onTap = () => {
@@ -101,9 +122,11 @@ export default function MascotBuddy() {
   const message = tapLine ?? lines[msgIndex % lines.length];
 
   return (
-    <div className="mb-8 rounded-2xl border border-zinc-200/50 bg-white p-4 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
-      {/* speech bubble */}
-      <div className="mb-1 min-h-10 rounded-xl rounded-bl-sm bg-zinc-100 px-4 py-2 dark:bg-zinc-800">
+    <div className="mb-8 overflow-hidden rounded-2xl border border-indigo-200/60 bg-gradient-to-br from-indigo-50 via-white to-white p-4 pb-0 shadow-elevated dark:border-indigo-900/40 dark:from-indigo-950/40 dark:via-zinc-900 dark:to-zinc-900">
+     
+
+      {/* speech bubble with tail */}
+      <div className="relative mb-4 w-fit max-w-full rounded-2xl rounded-bl-md border border-zinc-200/70 bg-white px-4 py-2.5 shadow-elevated dark:border-zinc-700/60 dark:bg-zinc-800">
         <AnimatePresence mode="wait">
           <motion.p
             key={message}
@@ -111,24 +134,28 @@ export default function MascotBuddy() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.25 }}
-            className="text-sm text-zinc-600 dark:text-zinc-300"
+            className="text-sm font-medium text-zinc-700 dark:text-zinc-200"
           >
             {message}
           </motion.p>
         </AnimatePresence>
+        <span className="absolute -bottom-[7px] left-5 h-3.5 w-3.5 rotate-45 border-b border-r border-zinc-200/70 bg-white dark:border-zinc-700/60 dark:bg-zinc-800" />
       </div>
 
-      {/* pacing track */}
-      <div ref={trackRef} className="relative h-[72px] overflow-hidden">
+      {/* stage */}
+      <div ref={trackRef} className="relative h-[84px]">
         <div
           ref={walkerRef}
           onPointerDown={onTap}
-          className="buddy-wander absolute bottom-0 left-0 w-[72px]"
+          className="buddy-wander absolute bottom-1 left-0 w-[76px]"
+          style={{ animationPlayState: onBreak ? "paused" : "running" }}
         >
-          <div className="buddy-face">
-            <Mascot mood="happy" size={64} />
+          <div className={onBreak ? "" : "buddy-face"}>
+            <Mascot mood={onBreak ? "counting" : "happy"} size={68} />
           </div>
         </div>
+        {/* ground line */}
+        <div className="absolute bottom-0 left-0 right-0 border-t-2 border-dashed border-indigo-200/70 dark:border-indigo-900/50" />
       </div>
     </div>
   );

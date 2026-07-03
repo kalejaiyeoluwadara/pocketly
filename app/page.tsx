@@ -31,10 +31,10 @@ export default function Home() {
       <div className="mx-auto max-w-md lg:max-w-4xl px-4 py-6">
         <MascotBuddy />
         <div className="mb-8">
-          <div className="rounded-2xl flex justify-between border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
-            <section>
+          <div className="rounded-2xl flex flex-wrap items-center justify-between gap-4 border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
+            <section className="min-w-0 flex-1">
               <p className="mb-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 flex items-center">
-                <Shield size={16} className="mr-1" />
+                <Shield size={16} className="mr-1 shrink-0" />
                 Total Balance
                 <button
                   onClick={() => setShowBalance(!showBalance)}
@@ -44,17 +44,14 @@ export default function Home() {
                   {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
                 </button>
               </p>
-              <p className="font-display font-bold text-zinc-900 dark:text-zinc-50">
-                {showBalance ? (
-                  <span className="text-3xl">
-                    {formatCurrency(totalBalance)}
-                  </span>
-                ) : (
-                  <span className="text-3xl">****</span>
-                )}
+              <p
+                className="truncate font-display font-bold leading-tight text-zinc-900 dark:text-zinc-50"
+                style={{ fontSize: "clamp(1.25rem, 6vw, 1.875rem)" }}
+              >
+                {showBalance ? formatCurrency(totalBalance) : "****"}
               </p>
             </section>
-            <section className="flex justify-end items-center">
+            <section className="flex shrink-0 items-center justify-end">
               <PocketForm ref={pocketFormRef} />
             </section>
           </div>

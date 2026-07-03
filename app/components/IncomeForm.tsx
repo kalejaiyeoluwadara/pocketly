@@ -8,13 +8,14 @@ import { formatCurrency } from "../utils/currency";
 import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
 import AmountPad, { evaluateAmount } from "./AmountPad";
+import DescriptionChips, { INCOME_PRESETS } from "./DescriptionChips";
 
 interface IncomeFormProps {
   defaultPocketId?: string;
 }
 
 export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
-  const { pockets, addIncome } = useApp();
+  const { pockets, income, addIncome } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [pocketId, setPocketId] = useState(defaultPocketId || "");
   const [amount, setAmount] = useState("");
@@ -126,6 +127,12 @@ export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
                     placeholder="Where did the money come from?"
                     className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-emerald-400"
                     required
+                  />
+                  <DescriptionChips
+                    history={income.map((i) => i.description)}
+                    presets={INCOME_PRESETS}
+                    selected={description}
+                    onPick={setDescription}
                   />
                 </div>
                 <div className="flex gap-3 pt-2">

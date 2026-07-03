@@ -8,6 +8,7 @@ import { formatCurrency } from "../utils/currency";
 import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
 import AmountPad, { evaluateAmount } from "./AmountPad";
+import DescriptionChips, { EXPENSE_PRESETS } from "./DescriptionChips";
 
 export interface ExpenseFormRef {
   open: () => void;
@@ -157,6 +158,14 @@ const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
                     placeholder="What did you spend on?"
                     className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-red-400"
                     required
+                  />
+                  <DescriptionChips
+                    history={expenses
+                      .filter((e) => !activePocketId || e.pocketId === activePocketId)
+                      .map((e) => e.description)}
+                    presets={EXPENSE_PRESETS}
+                    selected={description}
+                    onPick={setDescription}
                   />
                 </div>
                 <div className="flex gap-3 pt-2">

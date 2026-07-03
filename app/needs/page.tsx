@@ -53,8 +53,8 @@ export default function NeedsPage() {
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">
                   Total Needed
                 </p>
-                <p className="font-medium text-zinc-900 dark:text-zinc-50">
-                  <span className="text-2xl">
+                <p className="font-display font-bold text-zinc-900 dark:text-zinc-50">
+                  <span className="text-3xl">
                     {formatCurrency(totalNeeds)}
                   </span>
                 </p>

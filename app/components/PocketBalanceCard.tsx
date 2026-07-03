@@ -26,7 +26,7 @@ export default function PocketBalanceCard({ pocket, totalIncome, totalSpent }: P
             Current Balance
           </p>
           <p
-            className={`text-lg font-medium ${
+            className={`font-display text-3xl font-bold tracking-tight ${
               pocket.balance < 0
                 ? "text-red-500"
                 : "text-zinc-900 dark:text-zinc-50"

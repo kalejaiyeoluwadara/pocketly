@@ -120,8 +120,8 @@ export default function ExpensesPage() {
                 <span>{getFilterLabel()}</span>
               </div>
             </div>
-            <p className="font-medium text-red-500">
-              <span className="text-2xl">
+            <p className="font-display font-bold text-red-500">
+              <span className="text-3xl">
                 {formatCurrency(totalExpenses)}
               </span>
             </p>

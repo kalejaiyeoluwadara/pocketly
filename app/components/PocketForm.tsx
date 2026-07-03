@@ -6,6 +6,7 @@ import { PlusIcon, Loader2Icon } from "../icons";
 import { useApp } from "../context/AppContext";
 import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
+import AmountPad, { evaluateAmount } from "./AmountPad";
 
 export interface PocketFormRef {
   open: () => void;
@@ -28,7 +29,7 @@ const PocketForm = forwardRef<PocketFormRef>((props, ref) => {
 
     setIsLoading(true);
     try {
-      await addPocket(name, parseFloat(initialBalance));
+      await addPocket(name, evaluateAmount(initialBalance));
       toast.success("Pocket created successfully!");
       setName("");
       setInitialBalance("");
@@ -86,15 +87,7 @@ const PocketForm = forwardRef<PocketFormRef>((props, ref) => {
                   <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Initial Balance
                   </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={initialBalance}
-                    onChange={(e) => setInitialBalance(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-indigo-400"
-                    required
-                  />
+                  <AmountPad value={initialBalance} onChange={setInitialBalance} />
                 </div>
                 <div className="flex gap-3 pt-2">
                   <motion.button

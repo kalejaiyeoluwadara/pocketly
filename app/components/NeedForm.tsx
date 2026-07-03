@@ -7,6 +7,7 @@ import { useApp } from "../context/AppContext";
 import { Priority } from "../types";
 import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
+import AmountPad, { evaluateAmount } from "./AmountPad";
 
 export interface NeedFormRef {
   open: () => void;
@@ -26,11 +27,12 @@ const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !amount) return;
+    const total = evaluateAmount(amount);
+    if (!title || total <= 0) return;
 
     setIsLoading(true);
     try {
-      await addNeed(title, parseFloat(amount), priority);
+      await addNeed(title, total, priority);
       toast.success("Need added successfully!");
       setTitle("");
       setAmount("");
@@ -85,21 +87,7 @@ const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
                     required
                   />
                 </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Amount
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-amber-400"
-                    required
-                  />
-                </div>
+                <AmountPad value={amount} onChange={setAmount} />
                 <div>
                   <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Priority

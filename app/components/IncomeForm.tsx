@@ -7,6 +7,7 @@ import { useApp } from "../context/AppContext";
 import { formatCurrency } from "../utils/currency";
 import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
+import AmountPad, { evaluateAmount } from "./AmountPad";
 
 interface IncomeFormProps {
   defaultPocketId?: string;
@@ -32,11 +33,12 @@ export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
     e.preventDefault();
     const finalPocketId =
       pocketId || (pockets.length === 1 ? pockets[0].id : "");
-    if (!finalPocketId || !amount || !description) return;
+    const total = evaluateAmount(amount);
+    if (!finalPocketId || total <= 0 || !description) return;
 
     setIsLoading(true);
     try {
-      await addIncome(finalPocketId, parseFloat(amount), description);
+      await addIncome(finalPocketId, total, description);
       toast.success("Income added successfully!");
       setPocketId(defaultPocketId || (pockets.length === 1 ? pockets[0].id : ""));
       setAmount("");
@@ -112,21 +114,7 @@ export default function IncomeForm({ defaultPocketId }: IncomeFormProps) {
                     {pockets.find((p) => p.id === defaultPocketId)?.name}
                   </div>
                 )}
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Amount
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-emerald-400"
-                    required
-                  />
-                </div>
+                <AmountPad value={amount} onChange={setAmount} />
                 <div>
                   <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Description

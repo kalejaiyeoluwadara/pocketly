@@ -46,6 +46,47 @@ h3,
   letter-spacing: -0.025em;
 }
 
+/* Mascot — CSS-only animations, GPU-composited transforms */
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes mascot-breathe {
+  0%, 100% { transform: scaleY(1) rotate(-2deg); }
+  50% { transform: scaleY(1.03) rotate(-2deg); }
+}
+@keyframes mascot-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+@keyframes mascot-hop {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  30% { transform: translateY(-16px) scale(0.96, 1.08); }
+  60% { transform: translateY(0) scale(1.06, 0.93); }
+}
+@keyframes mascot-blink {
+  0%, 88%, 100% { transform: scaleY(1); }
+  93% { transform: scaleY(0.08); }
+}
+@keyframes mascot-float {
+  0% { opacity: 0; transform: translateY(4px); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+@keyframes mascot-dot {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes mascot-coin {
+  0% { opacity: 0; transform: translateY(-10px); }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(205px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot, .mascot * { animation: none !important; }
+}
+
 /* Enhanced shadow utilities */
 .shadow-elevated {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1),

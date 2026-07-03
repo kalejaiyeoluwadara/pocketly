@@ -83,6 +83,26 @@ h3,
   85% { opacity: 1; }
   100% { opacity: 0; transform: translateY(205px); }
 }
+@keyframes mascot-boing {
+  0% { transform: scale(1, 1); }
+  25% { transform: scale(1.12, 0.85); }
+  50% { transform: scale(0.92, 1.1); }
+  75% { transform: scale(1.04, 0.96); }
+  100% { transform: scale(1, 1); }
+}
+@keyframes mascot-spin {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+@keyframes mascot-wave {
+  0%, 100% { transform: rotate(-12deg); }
+  50% { transform: rotate(16deg); }
+}
+@keyframes mascot-pop {
+  0% { transform: translate(0, 0) scale(0.4); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translate(var(--pop-x, 0), var(--pop-y, -50px)) scale(1); opacity: 0; }
+}
 @media (prefers-reduced-motion: reduce) {
   .mascot, .mascot * { animation: none !important; }
 }

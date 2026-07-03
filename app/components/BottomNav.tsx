@@ -3,13 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { HomeIcon, TrendingDownIcon, TargetIcon, BrainIcon } from "../icons";
+import {
+  PocketsNavIcon,
+  ExpensesNavIcon,
+  NeedsNavIcon,
+  InsightsNavIcon,
+} from "../icons";
 
 const navItems = [
-  { href: "/", label: "Pockets", icon: HomeIcon },
-  { href: "/expenses", label: "Expenses", icon: TrendingDownIcon },
-  { href: "/needs", label: "Needs", icon: TargetIcon },
-  { href: "/insights", label: "Insights", icon: BrainIcon },
+  { href: "/", label: "Pockets", icon: PocketsNavIcon },
+  { href: "/expenses", label: "Expenses", icon: ExpensesNavIcon },
+  { href: "/needs", label: "Needs", icon: NeedsNavIcon },
+  { href: "/insights", label: "Insights", icon: InsightsNavIcon },
 ];
 
 export default function BottomNav() {
@@ -43,6 +48,7 @@ export default function BottomNav() {
               <span className="relative z-10 flex items-center gap-1.5">
                 <Icon
                   size={19}
+                  active={isActive}
                   className={`transition-colors duration-200 ${
                     isActive
                       ? "text-white dark:text-zinc-900"

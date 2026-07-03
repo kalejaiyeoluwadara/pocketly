@@ -299,6 +299,29 @@ h3,
   .flame-ember { opacity: 0; }
 }
 
+/* Bottom-nav icon flourishes — play once when a tab becomes active */
+@keyframes nav-pop {
+  0% { transform: scale(0.2); opacity: 0; }
+  60% { transform: scale(1.35); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes nav-bob {
+  0% { transform: translateY(-3px); }
+  55% { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+@keyframes nav-bar {
+  0% { transform: scaleY(0.15); }
+  70% { transform: scaleY(1.12); }
+  100% { transform: scaleY(1); }
+}
+.nav-pop { animation: nav-pop 0.45s ease-out; }
+.nav-bob { animation: nav-bob 0.5s ease-out; }
+.nav-bar { animation: nav-bar 0.45s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .nav-pop, .nav-bob, .nav-bar { animation: none; }
+}
+
 /* Page arrival — pairs with useAnimatedNavigate's send-off */
 @keyframes page-enter {
   from { opacity: 0; transform: translateY(14px) scale(0.985); }

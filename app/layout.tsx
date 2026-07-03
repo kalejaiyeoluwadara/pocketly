@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "./context/AppContext";
 import { Providers } from "./providers";
@@ -8,10 +8,16 @@ import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import StreakTracker from "./components/StreakTracker";
 import PWASplashScreen from "./components/PWASplashScreen";
 import { Toaster } from "sonner";
-const poppins = Poppins({
-  variable: "--font-poppins",
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["500", "600", "700", "800"],
+});
+
+const instrument = Instrument_Sans({
+  variable: "--font-body",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -37,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} antialiased`}>
+      <body className={`${bricolage.variable} ${instrument.variable} antialiased`}>
         <Providers>
           <AppProvider>
             <PWASplashScreen duration={2000} />

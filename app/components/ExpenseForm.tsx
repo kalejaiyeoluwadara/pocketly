@@ -7,6 +7,7 @@ import { useApp } from "../context/AppContext";
 import { formatCurrency } from "../utils/currency";
 import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
+import AmountPad, { evaluateAmount } from "./AmountPad";
 
 export interface ExpenseFormRef {
   open: () => void;
@@ -18,7 +19,7 @@ interface ExpenseFormProps {
 
 const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
   ({ defaultPocketId }, ref) => {
-  const { pockets, addExpense } = useApp();
+  const { pockets, expenses, addExpense } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [pocketId, setPocketId] = useState(defaultPocketId || "");
   const [amount, setAmount] = useState("");
@@ -37,15 +38,33 @@ const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
     open: () => setIsOpen(true),
   }));
 
+  const activePocketId =
+    pocketId || (pockets.length === 1 ? pockets[0].id : "");
+  const selectedPocket = pockets.find((p) => p.id === activePocketId);
+
+  // Most frequent recent amounts for this pocket, falling back to presets
+  const recent = expenses
+    .filter((e) => !activePocketId || e.pocketId === activePocketId)
+    .slice(0, 30)
+    .map((e) => e.amount);
+  const counts = new Map<number, number>();
+  recent.forEach((n) => counts.set(n, (counts.get(n) || 0) + 1));
+  const suggestions = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([n]) => n);
+  if (suggestions.length === 0) suggestions.push(500, 1000, 2000, 5000);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalPocketId =
       pocketId || (pockets.length === 1 ? pockets[0].id : "");
-    if (!finalPocketId || !amount || !description) return;
+    const total = evaluateAmount(amount);
+    if (!finalPocketId || total <= 0 || !description) return;
 
     setIsLoading(true);
     try {
-      await addExpense(finalPocketId, parseFloat(amount), description);
+      await addExpense(finalPocketId, total, description);
       toast.success("Expense added successfully!");
       setPocketId(defaultPocketId || (pockets.length === 1 ? pockets[0].id : ""));
       setAmount("");
@@ -121,21 +140,12 @@ const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
                     {pockets.find((p) => p.id === defaultPocketId)?.name}
                   </div>
                 )}
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                    Amount
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.01"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-red-400"
-                    required
-                  />
-                </div>
+                <AmountPad
+                  value={amount}
+                  onChange={setAmount}
+                  suggestions={suggestions}
+                  max={selectedPocket?.balance}
+                />
                 <div>
                   <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Description
@@ -172,6 +182,8 @@ const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
                         <Loader2Icon size={18} className="animate-spin" />
                         Adding...
                       </span>
+                    ) : evaluateAmount(amount) > 0 ? (
+                      `Spend ₦${evaluateAmount(amount).toLocaleString()}`
                     ) : (
                       "Add"
                     )}

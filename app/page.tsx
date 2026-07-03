@@ -40,13 +40,13 @@ export default function Home() {
                   {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
                 </button>
               </p>
-              <p className="font-medium text-zinc-900 dark:text-zinc-50">
+              <p className="font-display font-bold text-zinc-900 dark:text-zinc-50">
                 {showBalance ? (
-                  <span className="text-2xl">
+                  <span className="text-3xl">
                     {formatCurrency(totalBalance)}
                   </span>
                 ) : (
-                  <span className="text-2xl">****</span>
+                  <span className="text-3xl">****</span>
                 )}
               </p>
             </section>

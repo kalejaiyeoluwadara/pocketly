@@ -1,18 +1,100 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Pocketly design tokens
+   The app is written against zinc (neutrals) and indigo (brand) utilities;
+   the scales below redefine what those mean everywhere.
+
+   Neutrals — "paper & ink": warm porcelain lights, espresso-ink darks.
+   Brand    — "deep lagoon": a petrol teal, quieter and richer than indigo.
+   Income   — deep leaf green, desaturated from the neon emerald default.
+   Expense  — warm madder red, urgent without being alarming.
+--------------------------------------------------------------------------- */
+@theme {
+  /* Neutrals (replaces zinc) */
+  --color-zinc-50: #faf9f7;
+  --color-zinc-100: #f1efeb;
+  --color-zinc-200: #e5e2da;
+  --color-zinc-300: #d0ccc2;
+  --color-zinc-400: #9c968a;
+  --color-zinc-500: #6f6a60;
+  --color-zinc-600: #56524a;
+  --color-zinc-700: #3b3832;
+  --color-zinc-800: #26241f;
+  --color-zinc-900: #181713;
+  --color-zinc-950: #0e0d0b;
+
+  /* Brand (replaces indigo) */
+  --color-indigo-50: #edf7f5;
+  --color-indigo-100: #d6eee9;
+  --color-indigo-200: #addcd4;
+  --color-indigo-300: #7cc5ba;
+  --color-indigo-400: #47a89c;
+  --color-indigo-500: #218c80;
+  --color-indigo-600: #10746a;
+  --color-indigo-700: #0c5c54;
+  --color-indigo-800: #0c4a44;
+  --color-indigo-900: #0c3c38;
+  --color-indigo-950: #062724;
+
+  /* Income / success (replaces emerald) */
+  --color-emerald-50: #eff8f1;
+  --color-emerald-100: #d9efdf;
+  --color-emerald-200: #b3dfc1;
+  --color-emerald-300: #82c89d;
+  --color-emerald-400: #4fac76;
+  --color-emerald-500: #2f9459;
+  --color-emerald-600: #227a48;
+  --color-emerald-700: #1d613b;
+  --color-emerald-800: #1a4e31;
+  --color-emerald-900: #16402a;
+  --color-emerald-950: #0a2417;
+
+  /* Expense / error (replaces red) */
+  --color-red-50: #fdf3f1;
+  --color-red-100: #fbe3df;
+  --color-red-200: #f7c9c1;
+  --color-red-300: #efa397;
+  --color-red-400: #e47765;
+  --color-red-500: #d75440;
+  --color-red-600: #c23e2b;
+  --color-red-700: #a23123;
+  --color-red-800: #862c21;
+  --color-red-900: #702a21;
+  --color-red-950: #3c130d;
+
+  /* Warning (replaces amber) — slightly earthier than the default */
+  --color-amber-400: #e3a63b;
+  --color-amber-500: #d18c1f;
+  --color-amber-600: #b46e14;
+
+  /* Pocket accent cycle — muted to sit with the warm neutrals */
+  --color-blue-400: #6f95d6;
+  --color-blue-500: #4a76c4;
+  --color-pink-500: #cb6288;
+  --color-violet-500: #8271c7;
+
+  /* Softer geometry: every rounded-* in the app relaxes a step */
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  
-  /* Brand Colors */
-  --primary: 99 102 241; /* Indigo */
-  --primary-dark: 79 70 229;
-  --primary-light: 129 140 248;
-  
-  /* Semantic Colors */
-  --success: 34 197 94;
-  --warning: 234 179 8;
-  --error: 239 68 68;
+  --background: #faf9f7;
+  --foreground: #181713;
+  --ambient: rgba(16, 116, 106, 0.05);
+
+  /* Brand colors (RGB triplets used by components) */
+  --primary: 16 116 106;
+  --primary-dark: 12 92 84;
+  --primary-light: 71 168 156;
+
+  /* Semantic colors */
+  --success: 47 148 89;
+  --warning: 209 140 31;
+  --error: 215 84 64;
   --info: 59 130 246;
 }
 
@@ -25,17 +107,43 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #100f0d;
+    --foreground: #f1efeb;
+    --ambient: rgba(71, 168, 156, 0.07);
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: radial-gradient(
+    90rem 42rem at 50% -12rem,
+    var(--ambient),
+    transparent 70%
+  );
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-body), sans-serif;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.011em;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Paper grain — the quiet signature. Barely-there texture keeps large flat
+   surfaces from reading as sterile. Sits above content but never intercepts. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  body::after {
+    opacity: 0.05;
+  }
 }
 
 h1,
@@ -44,6 +152,15 @@ h3,
 .font-display {
   font-family: var(--font-display), var(--font-body), sans-serif;
   letter-spacing: -0.025em;
+}
+
+::selection {
+  background: rgba(16, 116, 106, 0.18);
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--primary-light));
+  outline-offset: 2px;
 }
 
 /* Mascot — CSS-only animations, GPU-composited transforms */
@@ -107,32 +224,34 @@ h3,
   .mascot, .mascot * { animation: none !important; }
 }
 
-/* Enhanced shadow utilities */
+/* Elevation — ink-tinted layered shadows instead of flat black */
 .shadow-elevated {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1),
-    0 0 0 1px rgb(0 0 0 / 0.05);
+  box-shadow: 0 1px 2px rgb(24 23 19 / 0.05), 0 4px 8px -2px rgb(24 23 19 / 0.07),
+    0 0 0 1px rgb(24 23 19 / 0.04);
 }
 
 .shadow-elevated-lg {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1),
-    0 0 0 1px rgb(0 0 0 / 0.05);
+  box-shadow: 0 2px 4px rgb(24 23 19 / 0.05), 0 12px 24px -6px rgb(24 23 19 / 0.12),
+    0 0 0 1px rgb(24 23 19 / 0.04);
 }
 
-.dark .shadow-elevated {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2),
-    0 0 0 1px rgb(255 255 255 / 0.05);
-}
+@media (prefers-color-scheme: dark) {
+  .shadow-elevated {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 8px -2px rgb(0 0 0 / 0.3),
+      inset 0 1px 0 rgb(241 239 235 / 0.04), 0 0 0 1px rgb(241 239 235 / 0.06);
+  }
 
-.dark .shadow-elevated-lg {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3),
-    0 0 0 1px rgb(255 255 255 / 0.05);
+  .shadow-elevated-lg {
+    box-shadow: 0 2px 4px rgb(0 0 0 / 0.4), 0 16px 32px -8px rgb(0 0 0 / 0.5),
+      inset 0 1px 0 rgb(241 239 235 / 0.05), 0 0 0 1px rgb(241 239 235 / 0.07);
+  }
 }
 
 /* Glassmorphism effect */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(250, 249, 247, 0.72);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
 }
 
 .scrollbar-hide {
@@ -140,8 +259,10 @@ h3,
   -ms-overflow-style: none;
 }
 
-.dark .glass {
-  background: rgba(0, 0, 0, 0.6);
+@media (prefers-color-scheme: dark) {
+  .glass {
+    background: rgba(16, 15, 13, 0.66);
+  }
 }
 
 /* Markdown content styling */
@@ -160,15 +281,17 @@ h3,
 }
 
 .markdown-content code {
-  background-color: rgba(100, 100, 100, 0.1);
+  background-color: rgba(111, 106, 96, 0.12);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
   font-family: ui-monospace, monospace;
 }
 
-.dark .markdown-content code {
-  background-color: rgba(255, 255, 255, 0.1);
+@media (prefers-color-scheme: dark) {
+  .markdown-content code {
+    background-color: rgba(241, 239, 235, 0.1);
+  }
 }
 
 .markdown-content ul {
@@ -189,4 +312,3 @@ h3,
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
 }
-

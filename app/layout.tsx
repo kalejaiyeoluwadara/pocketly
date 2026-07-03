@@ -24,7 +24,10 @@ export const metadata: Metadata = {
   title: "Pocketly - Expense Tracker",
   description: "Track your expenses and manage your pockets",
   manifest: "/manifest.json",
-  themeColor: "#18181b",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf9f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#100f0d" },
+  ],
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -52,7 +55,16 @@ export default function RootLayout({
             <PWAInstallPrompt />
           </AppProvider>
         </Providers>
-        <Toaster position="bottom-center" richColors={false} />
+        <Toaster
+          position="bottom-center"
+          richColors={false}
+          toastOptions={{
+            classNames: {
+              toast:
+                "!rounded-xl !border-zinc-200 !bg-white !text-zinc-900 !shadow-elevated-lg dark:!border-zinc-800 dark:!bg-zinc-900 dark:!text-zinc-50",
+            },
+          }}
+        />
         <Analytics />
       </body>
     </html>

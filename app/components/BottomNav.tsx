@@ -13,7 +13,7 @@ import {
 const navItems = [
   { href: "/", label: "Pockets", icon: PocketsNavIcon },
   { href: "/expenses", label: "Expenses", icon: ExpensesNavIcon },
-  { href: "/needs", label: "Needs", icon: NeedsNavIcon },
+  { href: "/needs", label: "Budget", icon: NeedsNavIcon },
   { href: "/insights", label: "Insights", icon: InsightsNavIcon },
 ];
 

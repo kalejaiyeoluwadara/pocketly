@@ -7,6 +7,8 @@ export interface INeed extends mongoose.Document {
   amount: number;
   priority: Priority;
   completed: boolean;
+  /** Pocket this planned spend will come from (optional) */
+  pocketId?: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -33,6 +35,11 @@ const NeedSchema = new Schema<INeed>(
     completed: {
       type: Boolean,
       default: false,
+    },
+    pocketId: {
+      type: Schema.Types.ObjectId,
+      ref: "Pocket",
+      required: false,
     },
     userId: {
       type: Schema.Types.ObjectId,

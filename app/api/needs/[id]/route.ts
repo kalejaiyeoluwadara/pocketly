@@ -43,6 +43,7 @@ export async function GET(
       amount: need.amount,
       priority: need.priority,
       completed: need.completed || false,
+      pocketId: need.pocketId ? need.pocketId.toString() : undefined,
       createdAt: need.createdAt.toISOString(),
       updatedAt: need.updatedAt.toISOString(),
     });
@@ -104,6 +105,7 @@ export async function PUT(
         amount: need.amount,
         priority: need.priority,
         completed: need.completed,
+        pocketId: need.pocketId ? need.pocketId.toString() : undefined,
         createdAt: need.createdAt.toISOString(),
         updatedAt: need.updatedAt.toISOString(),
       });
@@ -149,6 +151,12 @@ export async function PUT(
     if (body.completed !== undefined) {
       need.completed = body.completed;
     }
+    if (body.pocketId !== undefined) {
+      need.pocketId =
+        body.pocketId && mongoose.Types.ObjectId.isValid(body.pocketId)
+          ? new mongoose.Types.ObjectId(body.pocketId)
+          : undefined;
+    }
 
     await need.save();
 
@@ -170,6 +178,7 @@ export async function PUT(
       amount: need.amount,
       priority: need.priority,
       completed: need.completed,
+      pocketId: need.pocketId ? need.pocketId.toString() : undefined,
       createdAt: need.createdAt.toISOString(),
       updatedAt: need.updatedAt.toISOString(),
     });

@@ -14,11 +14,12 @@ export interface NeedFormRef {
 }
 
 const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
-  const { addNeed } = useApp();
+  const { addNeed, pockets } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
+  const [pocketId, setPocketId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useImperativeHandle(ref, () => ({
@@ -32,11 +33,12 @@ const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
 
     setIsLoading(true);
     try {
-      await addNeed(title, total, priority);
-      toast.success("Need added successfully!");
+      await addNeed(title, total, priority, pocketId || undefined);
+      toast.success("Planned spend added!");
       setTitle("");
       setAmount("");
       setPriority("medium");
+      setPocketId("");
       setIsOpen(false);
     } catch (error) {
       toast.error(
@@ -59,7 +61,7 @@ const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
           size={10}
           className="transition-transform text-black duration-300 group-hover:rotate-90"
         />
-        <p className="text-xs font-medium text-black ">Add Need</p>
+        <p className="text-xs font-medium text-black ">Plan a Spend</p>
       </motion.button>
 
       <AnimatePresence>
@@ -70,7 +72,7 @@ const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
                   <PlusIcon size={20} className="text-white" />
                 </div>
                 <h2 className="text-2xl font-medium text-zinc-900 dark:text-zinc-50">
-                  New Need
+                  Plan a Spend
                 </h2>
               </div>
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -82,7 +84,7 @@ const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="What do you need?"
+                    placeholder="What are you planning to buy?"
                     className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-amber-400"
                     required
                   />
@@ -103,6 +105,28 @@ const NeedForm = forwardRef<NeedFormRef>((props, ref) => {
                     <option value="low">Low</option>
                   </select>
                 </div>
+                {pockets.length > 0 && (
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                      From which pocket?{" "}
+                      <span className="font-normal text-zinc-400 dark:text-zinc-500">
+                        (optional)
+                      </span>
+                    </label>
+                    <select
+                      value={pocketId}
+                      onChange={(e) => setPocketId(e.target.value)}
+                      className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                    >
+                      <option value="">Not sure yet</option>
+                      {pockets.map((pocket) => (
+                        <option key={pocket.id} value={pocket.id}>
+                          {pocket.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <div className="flex gap-3 pt-2">
                   <motion.button
                     type="button"

@@ -30,6 +30,7 @@ export async function GET() {
       amount: need.amount,
       priority: need.priority,
       completed: need.completed || false,
+      pocketId: need.pocketId ? need.pocketId.toString() : undefined,
       createdAt: need.createdAt.toISOString(),
       updatedAt: need.updatedAt.toISOString(),
     }));
@@ -77,6 +78,10 @@ export async function POST(request: NextRequest) {
       title: body.title,
       amount: body.amount,
       priority: body.priority,
+      pocketId:
+        body.pocketId && mongoose.Types.ObjectId.isValid(body.pocketId)
+          ? new mongoose.Types.ObjectId(body.pocketId)
+          : undefined,
       userId: new mongoose.Types.ObjectId(user.id),
     });
 
@@ -99,6 +104,7 @@ export async function POST(request: NextRequest) {
         amount: need.amount,
         priority: need.priority,
         completed: need.completed || false,
+        pocketId: need.pocketId ? need.pocketId.toString() : undefined,
         createdAt: need.createdAt.toISOString(),
         updatedAt: need.updatedAt.toISOString(),
       },

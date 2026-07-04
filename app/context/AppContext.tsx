@@ -16,8 +16,8 @@ interface AppContextType {
   updateExpense: (id: string, pocketId: string, amount: number, description: string, category?: string) => Promise<void>;
   addIncome: (pocketId: string, amount: number, description: string) => Promise<void>;
   updateIncome: (id: string, pocketId: string, amount: number, description: string) => Promise<void>;
-  addNeed: (title: string, amount: number, priority: "high" | "medium" | "low") => Promise<void>;
-  updateNeed: (id: string, title: string, amount: number, priority: "high" | "medium" | "low") => Promise<void>;
+  addNeed: (title: string, amount: number, priority: "high" | "medium" | "low", pocketId?: string) => Promise<void>;
+  updateNeed: (id: string, title: string, amount: number, priority: "high" | "medium" | "low", pocketId?: string) => Promise<void>;
   toggleNeedCompletion: (id: string, completed: boolean) => Promise<void>;
   deletePocket: (id: string) => Promise<void>;
   deleteExpense: (id: string) => Promise<void>;
@@ -194,13 +194,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addNeed = async (title: string, amount: number, priority: "high" | "medium" | "low") => {
+  const addNeed = async (title: string, amount: number, priority: "high" | "medium" | "low", pocketId?: string) => {
     try {
       setError(null);
       const response = await fetch("/api/needs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, amount, priority }),
+        body: JSON.stringify({ title, amount, priority, pocketId }),
       });
 
       if (!response.ok) {
@@ -217,13 +217,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateNeed = async (id: string, title: string, amount: number, priority: "high" | "medium" | "low") => {
+  const updateNeed = async (id: string, title: string, amount: number, priority: "high" | "medium" | "low", pocketId?: string) => {
     try {
       setError(null);
       const response = await fetch(`/api/needs/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, amount, priority }),
+        body: JSON.stringify({ title, amount, priority, pocketId: pocketId ?? "" }),
       });
 
       if (!response.ok) {

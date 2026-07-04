@@ -7,7 +7,7 @@ import { HomeIcon, TrendingDownIcon, TargetIcon, BrainIcon } from "../icons";
 const navItems = [
   { href: "/", label: "Pockets", icon: HomeIcon },
   { href: "/expenses", label: "Expenses", icon: TrendingDownIcon },
-  { href: "/needs", label: "Needs", icon: TargetIcon },
+  { href: "/needs", label: "Budget", icon: TargetIcon },
   { href: "/insights", label: "Insights", icon: BrainIcon },
 ];
 

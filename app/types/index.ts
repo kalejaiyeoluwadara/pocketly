@@ -50,6 +50,8 @@ export interface Need {
   amount: number;
   priority: Priority;
   completed: boolean;
+  /** Pocket this planned spend will come from */
+  pocketId?: string;
   createdAt: string;
   updatedAt: string;
 }

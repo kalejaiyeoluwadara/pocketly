@@ -43,6 +43,7 @@ export async function GET(
       id: pocket._id.toString(),
       name: pocket.name,
       balance: pocket.balance,
+      monthlyBudget: pocket.monthlyBudget || 0,
       createdAt: pocket.createdAt.toISOString(),
       updatedAt: pocket.updatedAt.toISOString(),
     });
@@ -91,6 +92,9 @@ export async function PUT(
     if (body.balance !== undefined) {
       pocket.balance = body.balance;
     }
+    if (body.monthlyBudget !== undefined) {
+      pocket.monthlyBudget = Math.max(0, Number(body.monthlyBudget) || 0);
+    }
 
     await pocket.save();
 
@@ -112,6 +116,7 @@ export async function PUT(
       id: pocket._id.toString(),
       name: pocket.name,
       balance: pocket.balance,
+      monthlyBudget: pocket.monthlyBudget || 0,
       createdAt: pocket.createdAt.toISOString(),
       updatedAt: pocket.updatedAt.toISOString(),
     });

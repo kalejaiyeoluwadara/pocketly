@@ -8,6 +8,18 @@ import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
 import AmountPad, { evaluateAmount } from "./AmountPad";
 
+// One-tap pocket templates reflecting how Nigerians actually split money
+const POCKET_TEMPLATES = [
+  { name: "Food", emoji: "🍛" },
+  { name: "Transport", emoji: "🚌" },
+  { name: "Data & Airtime", emoji: "📱" },
+  { name: "Family Support", emoji: "🤝" },
+  { name: "Rent", emoji: "🏠" },
+  { name: "Ajo / Savings", emoji: "💰" },
+  { name: "Church / Mosque", emoji: "🙏" },
+  { name: "Flex", emoji: "🎉" },
+];
+
 export interface PocketFormRef {
   open: () => void;
 }
@@ -17,6 +29,7 @@ const PocketForm = forwardRef<PocketFormRef>((props, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [initialBalance, setInitialBalance] = useState("");
+  const [monthlyBudget, setMonthlyBudget] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useImperativeHandle(ref, () => ({
@@ -29,10 +42,15 @@ const PocketForm = forwardRef<PocketFormRef>((props, ref) => {
 
     setIsLoading(true);
     try {
-      await addPocket(name, evaluateAmount(initialBalance));
+      await addPocket(
+        name,
+        evaluateAmount(initialBalance),
+        monthlyBudget ? evaluateAmount(monthlyBudget) : undefined
+      );
       toast.success("Pocket created successfully!");
       setName("");
       setInitialBalance("");
+      setMonthlyBudget("");
       setIsOpen(false);
     } catch (error) {
       toast.error(
@@ -82,12 +100,51 @@ const PocketForm = forwardRef<PocketFormRef>((props, ref) => {
                     className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-indigo-400"
                     required
                   />
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {POCKET_TEMPLATES.map((t) => {
+                      const active = name === t.name;
+                      return (
+                        <motion.button
+                          key={t.name}
+                          type="button"
+                          whileTap={{ scale: 0.92 }}
+                          onClick={() => setName(t.name)}
+                          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                            active
+                              ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                              : "border-zinc-200 bg-zinc-50 text-zinc-600 hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
+                          }`}
+                        >
+                          <span className="mr-1">{t.emoji}</span>
+                          {t.name}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Initial Balance
                   </label>
                   <AmountPad value={initialBalance} onChange={setInitialBalance} />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Monthly Budget{" "}
+                    <span className="font-normal text-zinc-400 dark:text-zinc-500">
+                      (optional)
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={monthlyBudget}
+                    onChange={(e) =>
+                      setMonthlyBudget(e.target.value.replace(/[^\d.+]/g, ""))
+                    }
+                    placeholder="e.g. 50000 — we'll track your pace against it"
+                    className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-sm placeholder:text-zinc-400 transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-indigo-400"
+                  />
                 </div>
                 <div className="flex gap-3 pt-2">
                   <motion.button

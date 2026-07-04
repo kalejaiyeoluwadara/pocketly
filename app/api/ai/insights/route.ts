@@ -333,28 +333,35 @@ export async function GET(request: NextRequest) {
     );
     const averagePerDay = totalSpent / daysDiff;
 
-    // Categorize expenses using AI
+    // Categorize expenses: stored categories win; only legacy expenses
+    // without one go through AI (then keyword) categorization
     const categoryMap = new Map<string, { amount: number; count: number }>();
     let aiCategorizationMap = new Map<string, string>();
 
-    try {
-      // Try AI categorization first
-      aiCategorizationMap = await categorizeExpensesWithAI(
-        expenses.map((exp) => ({
-          description: exp.description,
-          amount: exp.amount,
-        }))
-      );
-      console.log(
-        `✓ AI categorized ${aiCategorizationMap.size} expenses successfully`
-      );
-    } catch (error) {
-      console.error("AI categorization failed, using fallback:", error);
+    const uncategorized = expenses.filter(
+      (exp) => !exp.category || exp.category === "Other"
+    );
+
+    if (uncategorized.length > 0) {
+      try {
+        aiCategorizationMap = await categorizeExpensesWithAI(
+          uncategorized.map((exp) => ({
+            description: exp.description,
+            amount: exp.amount,
+          }))
+        );
+        console.log(
+          `✓ AI categorized ${aiCategorizationMap.size} expenses successfully`
+        );
+      } catch (error) {
+        console.error("AI categorization failed, using fallback:", error);
+      }
     }
 
-    // Build category map using AI categorization or fallback
+    // Build category map: stored -> AI -> keyword fallback
     expenses.forEach((exp) => {
       const category =
+        (exp.category && exp.category !== "Other" ? exp.category : null) ||
         aiCategorizationMap.get(exp.description) ||
         fallbackCategorizeExpense(exp.description);
       const existing = categoryMap.get(category) || { amount: 0, count: 0 };

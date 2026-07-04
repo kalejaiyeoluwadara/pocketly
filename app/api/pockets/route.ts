@@ -28,6 +28,7 @@ export async function GET() {
       id: pocket._id.toString(),
       name: pocket.name,
       balance: pocket.balance,
+      monthlyBudget: pocket.monthlyBudget || 0,
       createdAt: pocket.createdAt.toISOString(),
       updatedAt: pocket.updatedAt.toISOString(),
     }));
@@ -60,6 +61,7 @@ export async function POST(request: NextRequest) {
     const pocket = await Pocket.create({
       name: body.name,
       balance: body.balance || 0,
+      monthlyBudget: Math.max(0, Number(body.monthlyBudget) || 0),
       userId: new mongoose.Types.ObjectId(user.id),
     });
 
@@ -80,6 +82,7 @@ export async function POST(request: NextRequest) {
         id: pocket._id.toString(),
         name: pocket.name,
         balance: pocket.balance,
+        monthlyBudget: pocket.monthlyBudget || 0,
         createdAt: pocket.createdAt.toISOString(),
         updatedAt: pocket.updatedAt.toISOString(),
       },

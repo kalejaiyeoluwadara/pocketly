@@ -6,12 +6,18 @@ import { Expense } from "../types";
 import { Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
+import CategoryChips from "./CategoryChips";
+import {
+  suggestCategory,
+  isExpenseCategory,
+  ExpenseCategory,
+} from "../utils/categories";
 
 interface UpdateExpenseModalProps {
   isOpen: boolean;
   onClose: () => void;
   expense: Expense;
-  onUpdate: (id: string, pocketId: string, amount: number, description: string) => Promise<void>;
+  onUpdate: (id: string, pocketId: string, amount: number, description: string, category?: string) => Promise<void>;
 }
 
 export default function UpdateExpenseModal({
@@ -22,12 +28,18 @@ export default function UpdateExpenseModal({
 }: UpdateExpenseModalProps) {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState<ExpenseCategory>("Other");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen && expense) {
       setAmount(expense.amount.toString());
       setDescription(expense.description);
+      setCategory(
+        isExpenseCategory(expense.category)
+          ? expense.category
+          : suggestCategory(expense.description)
+      );
     }
   }, [isOpen, expense]);
 
@@ -37,7 +49,7 @@ export default function UpdateExpenseModal({
 
     setIsLoading(true);
     try {
-      await onUpdate(expense.id, expense.pocketId, parseFloat(amount), description);
+      await onUpdate(expense.id, expense.pocketId, parseFloat(amount), description, category);
       toast.success("Expense updated successfully!");
       onClose();
       setAmount("");
@@ -91,6 +103,12 @@ export default function UpdateExpenseModal({
                   className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-red-400"
                   required
                 />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Category
+                </label>
+                <CategoryChips selected={category} onPick={setCategory} />
               </div>
               <div className="flex gap-3 pt-2">
                 <motion.button

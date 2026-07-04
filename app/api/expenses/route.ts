@@ -11,6 +11,7 @@ import {
   notFoundResponse,
 } from "@/lib/api-helpers";
 import { createNotification, formatCurrencyForNotification } from "@/lib/notifications";
+import { isExpenseCategory, suggestCategory } from "@/app/utils/categories";
 
 // GET /api/expenses - Get all expenses for authenticated user (optional pocketId filter)
 export async function GET(request: NextRequest) {
@@ -39,6 +40,7 @@ export async function GET(request: NextRequest) {
       pocketId: expense.pocketId.toString(),
       amount: expense.amount,
       description: expense.description,
+      category: expense.category || suggestCategory(expense.description),
       createdAt: expense.createdAt.toISOString(),
       updatedAt: expense.updatedAt.toISOString(),
     }));
@@ -106,13 +108,19 @@ export async function POST(request: NextRequest) {
       return notFoundResponse("Pocket");
     }
 
-    // Create expense
+    // Create expense; fall back to keyword categorization when the client
+    // doesn't send a valid category
+    const category = isExpenseCategory(body.category)
+      ? body.category
+      : suggestCategory(body.description);
+
     const expense = await Expense.create(
       [
         {
           pocketId: new mongoose.Types.ObjectId(body.pocketId),
           amount: body.amount,
           description: body.description,
+          category,
           userId: new mongoose.Types.ObjectId(user.id),
         },
       ],
@@ -160,6 +168,7 @@ export async function POST(request: NextRequest) {
         pocketId: expense[0].pocketId.toString(),
         amount: expense[0].amount,
         description: expense[0].description,
+        category: expense[0].category,
         createdAt: expense[0].createdAt.toISOString(),
         updatedAt: expense[0].updatedAt.toISOString(),
       },

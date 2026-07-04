@@ -4,6 +4,7 @@ export interface IExpense extends mongoose.Document {
   pocketId: mongoose.Types.ObjectId;
   amount: number;
   description: string;
+  category: string;
   userId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -26,6 +27,11 @@ const ExpenseSchema = new Schema<IExpense>(
       type: String,
       required: true,
       trim: true,
+    },
+    category: {
+      type: String,
+      trim: true,
+      default: "Other",
     },
     userId: {
       type: Schema.Types.ObjectId,

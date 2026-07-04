@@ -10,10 +10,10 @@ interface AppContextType {
   needs: Need[];
   isLoading: boolean;
   error: string | null;
-  addPocket: (name: string, initialBalance: number) => Promise<void>;
-  updatePocket: (id: string, name: string, balance?: number) => Promise<void>;
-  addExpense: (pocketId: string, amount: number, description: string) => Promise<void>;
-  updateExpense: (id: string, pocketId: string, amount: number, description: string) => Promise<void>;
+  addPocket: (name: string, initialBalance: number, monthlyBudget?: number) => Promise<void>;
+  updatePocket: (id: string, name: string, balance?: number, monthlyBudget?: number) => Promise<void>;
+  addExpense: (pocketId: string, amount: number, description: string, category?: string) => Promise<void>;
+  updateExpense: (id: string, pocketId: string, amount: number, description: string, category?: string) => Promise<void>;
   addIncome: (pocketId: string, amount: number, description: string) => Promise<void>;
   updateIncome: (id: string, pocketId: string, amount: number, description: string) => Promise<void>;
   addNeed: (title: string, amount: number, priority: "high" | "medium" | "low") => Promise<void>;
@@ -76,13 +76,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     fetchData();
   }, []);
 
-  const addPocket = async (name: string, initialBalance: number) => {
+  const addPocket = async (name: string, initialBalance: number, monthlyBudget?: number) => {
     try {
       setError(null);
       const response = await fetch("/api/pockets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, balance: initialBalance }),
+        body: JSON.stringify({ name, balance: initialBalance, monthlyBudget }),
       });
 
       if (!response.ok) {
@@ -99,12 +99,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updatePocket = async (id: string, name: string, balance?: number) => {
+  const updatePocket = async (id: string, name: string, balance?: number, monthlyBudget?: number) => {
     try {
       setError(null);
       const body: any = { name };
       if (balance !== undefined) {
         body.balance = balance;
+      }
+      if (monthlyBudget !== undefined) {
+        body.monthlyBudget = monthlyBudget;
       }
 
       const response = await fetch(`/api/pockets/${id}`, {
@@ -127,13 +130,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addExpense = async (pocketId: string, amount: number, description: string) => {
+  const addExpense = async (pocketId: string, amount: number, description: string, category?: string) => {
     try {
       setError(null);
       const response = await fetch("/api/expenses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pocketId, amount, description }),
+        body: JSON.stringify({ pocketId, amount, description, category }),
       });
 
       if (!response.ok) {
@@ -157,13 +160,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateExpense = async (id: string, pocketId: string, amount: number, description: string) => {
+  const updateExpense = async (id: string, pocketId: string, amount: number, description: string, category?: string) => {
     try {
       setError(null);
       const response = await fetch(`/api/expenses/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount, description }),
+        body: JSON.stringify(
+          category !== undefined
+            ? { amount, description, category }
+            : { amount, description }
+        ),
       });
 
       if (!response.ok) {

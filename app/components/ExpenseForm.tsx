@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import ResponsiveModal from "./ResponsiveModal";
 import AmountPad, { evaluateAmount } from "./AmountPad";
 import DescriptionChips, { EXPENSE_PRESETS } from "./DescriptionChips";
+import CategoryChips from "./CategoryChips";
+import { suggestCategory, ExpenseCategory } from "../utils/categories";
 
 export interface ExpenseFormRef {
   open: () => void;
@@ -25,7 +27,13 @@ const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
   const [pocketId, setPocketId] = useState(defaultPocketId || "");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  // null means "follow the suggestion"; set once the user picks a chip
+  const [categoryOverride, setCategoryOverride] =
+    useState<ExpenseCategory | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const suggested = suggestCategory(description);
+  const category = categoryOverride ?? suggested;
 
   useEffect(() => {
     if (defaultPocketId) {
@@ -65,11 +73,12 @@ const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
 
     setIsLoading(true);
     try {
-      await addExpense(finalPocketId, total, description);
+      await addExpense(finalPocketId, total, description, category);
       toast.success("Expense added successfully!");
       setPocketId(defaultPocketId || (pockets.length === 1 ? pockets[0].id : ""));
       setAmount("");
       setDescription("");
+      setCategoryOverride(null);
       setIsOpen(false);
     } catch (error) {
       toast.error(
@@ -166,6 +175,16 @@ const ExpenseForm = forwardRef<ExpenseFormRef, ExpenseFormProps>(
                     presets={EXPENSE_PRESETS}
                     selected={description}
                     onPick={setDescription}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Category
+                  </label>
+                  <CategoryChips
+                    selected={category}
+                    suggested={suggested}
+                    onPick={setCategoryOverride}
                   />
                 </div>
                 <div className="flex gap-3 pt-2">

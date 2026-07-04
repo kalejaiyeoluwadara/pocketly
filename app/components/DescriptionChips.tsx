@@ -69,6 +69,8 @@ export const EXPENSE_PRESETS = [
   "Data",
   "Groceries",
   "Fuel",
+  "Family support",
+  "Bank charges",
 ];
 
 export const INCOME_PRESETS = [

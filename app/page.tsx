@@ -15,6 +15,8 @@ import Nav from "./components/Nav";
 import ContributionGraph from "./components/ContributionGraph";
 import { useAnimatedNavigate } from "./utils/useAnimatedNavigate";
 import MascotBuddy from "./components/MascotBuddy";
+import QuickAdd from "./components/QuickAdd";
+import DailyCheckIn from "./components/DailyCheckIn";
 
 export default function Home() {
   const { pockets, isLoading } = useApp();
@@ -30,9 +32,10 @@ export default function Home() {
       <Nav />
       <div className="mx-auto max-w-md lg:max-w-4xl px-4 py-6">
         <MascotBuddy />
+        <DailyCheckIn />
         <div className="mb-8">
-          <div className="rounded-2xl flex flex-wrap items-center justify-between gap-4 border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
-            <section className="min-w-0 flex-1">
+          <div className="rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-zinc-200/50 bg-white p-6 shadow-elevated dark:border-zinc-800/50 dark:bg-zinc-900">
+            <section className="min-w-0">
               <p className="mb-2 text-sm font-medium text-zinc-500 dark:text-zinc-400 flex items-center">
                 <Shield size={16} className="mr-1 shrink-0" />
                 Total Balance
@@ -45,13 +48,13 @@ export default function Home() {
                 </button>
               </p>
               <p
-                className="truncate font-display font-bold leading-tight text-zinc-900 dark:text-zinc-50"
+                className="font-display font-bold leading-tight text-zinc-900 dark:text-zinc-50"
                 style={{ fontSize: "clamp(1.25rem, 6vw, 1.875rem)" }}
               >
                 {showBalance ? formatCurrency(totalBalance) : "****"}
               </p>
             </section>
-            <section className="flex shrink-0 items-center justify-end">
+            <section className="flex shrink-0 items-center sm:justify-end">
               <PocketForm ref={pocketFormRef} />
             </section>
           </div>
@@ -84,6 +87,7 @@ export default function Home() {
           <ContributionGraph />
         </div>
       </div>
+      <QuickAdd />
       <BottomNav />
     </div>
   );

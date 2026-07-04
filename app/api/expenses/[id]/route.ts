@@ -14,6 +14,7 @@ import {
   createNotification,
   formatCurrencyForNotification,
 } from "@/lib/notifications";
+import { isExpenseCategory, suggestCategory } from "@/app/utils/categories";
 
 // GET /api/expenses/[id] - Get single expense
 export async function GET(
@@ -46,6 +47,7 @@ export async function GET(
       pocketId: expense.pocketId.toString(),
       amount: expense.amount,
       description: expense.description,
+      category: expense.category || suggestCategory(expense.description),
       createdAt: expense.createdAt.toISOString(),
       updatedAt: expense.updatedAt.toISOString(),
     });
@@ -113,6 +115,11 @@ export async function PUT(
     // Update expense
     expense.amount = newAmount;
     expense.description = body.description;
+    if (body.category !== undefined) {
+      expense.category = isExpenseCategory(body.category)
+        ? body.category
+        : suggestCategory(body.description);
+    }
     await expense.save({ session });
 
     // Update pocket balance
@@ -166,6 +173,7 @@ export async function PUT(
       pocketId: expense.pocketId.toString(),
       amount: expense.amount,
       description: expense.description,
+      category: expense.category,
       createdAt: expense.createdAt.toISOString(),
       updatedAt: expense.updatedAt.toISOString(),
     });

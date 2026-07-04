@@ -10,7 +10,7 @@ interface UpdatePocketModalProps {
   isOpen: boolean;
   onClose: () => void;
   pocket: Pocket;
-  onUpdate: (id: string, name: string, balance?: number) => Promise<void>;
+  onUpdate: (id: string, name: string, balance?: number, monthlyBudget?: number) => Promise<void>;
 }
 
 export default function UpdatePocketModal({
@@ -21,11 +21,15 @@ export default function UpdatePocketModal({
 }: UpdatePocketModalProps) {
   const [name, setName] = useState("");
   const [balance, setBalance] = useState("");
+  const [monthlyBudget, setMonthlyBudget] = useState("");
 
   useEffect(() => {
     if (isOpen && pocket) {
       setName(pocket.name);
       setBalance(pocket.balance.toString());
+      setMonthlyBudget(
+        pocket.monthlyBudget ? pocket.monthlyBudget.toString() : ""
+      );
     }
   }, [isOpen, pocket]);
 
@@ -34,10 +38,16 @@ export default function UpdatePocketModal({
     if (!name) return;
 
     try {
-      await onUpdate(pocket.id, name, parseFloat(balance));
+      await onUpdate(
+        pocket.id,
+        name,
+        parseFloat(balance),
+        monthlyBudget ? parseFloat(monthlyBudget) : 0
+      );
       onClose();
       setName("");
       setBalance("");
+      setMonthlyBudget("");
     } catch (error) {
       console.error("Failed to update pocket:", error);
     }
@@ -81,6 +91,23 @@ export default function UpdatePocketModal({
                   placeholder="0.00"
                   className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-indigo-400"
                   required
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  Monthly Budget{" "}
+                  <span className="font-normal text-zinc-400 dark:text-zinc-500">
+                    (optional)
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={monthlyBudget}
+                  onChange={(e) => setMonthlyBudget(e.target.value)}
+                  placeholder="0 = no budget"
+                  className="w-full rounded-xl border-2 border-zinc-200 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-indigo-400"
                 />
               </div>
               <div className="flex gap-3 pt-2">

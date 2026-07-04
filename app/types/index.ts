@@ -19,6 +19,8 @@ export interface Pocket {
   id: string;
   name: string;
   balance: number;
+  /** Monthly spending target; 0 or undefined means no budget set */
+  monthlyBudget?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -28,6 +30,7 @@ export interface Expense {
   pocketId: string;
   amount: number;
   description: string;
+  category?: string;
   createdAt: string;
   updatedAt: string;
 }

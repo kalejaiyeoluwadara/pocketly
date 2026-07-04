@@ -3,6 +3,7 @@ import mongoose, { Schema, Model } from "mongoose";
 export interface IPocket extends mongoose.Document {
   name: string;
   balance: number;
+  monthlyBudget: number;
   userId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -19,6 +20,12 @@ const PocketSchema = new Schema<IPocket>(
       type: Number,
       required: true,
       default: 0,
+    },
+    // Optional monthly spending target; 0 means no budget set
+    monthlyBudget: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
     userId: {
       type: Schema.Types.ObjectId,

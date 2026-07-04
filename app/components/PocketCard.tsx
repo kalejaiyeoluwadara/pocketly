@@ -6,6 +6,8 @@ import moment from "moment";
 import { PocketPouchIcon } from "../icons";
 import { Pocket } from "../types";
 import { ChevronRightIcon } from "lucide-react";
+import { useApp } from "../context/AppContext";
+import { getPocketPace } from "../utils/pace";
 
 interface PocketCardProps {
   pocket: Pocket;
@@ -37,9 +39,17 @@ export default function PocketCard({
   leaving = false,
   dimmed = false,
 }: PocketCardProps) {
+  const { expenses } = useApp();
   const isNegative = pocket.balance < 0;
   const accent = getAccent(pocket.name);
   const href = `/pocket/${pocket.id}`;
+  const pace = getPocketPace(pocket, expenses);
+
+  const paceColors = {
+    "on-track": { bar: "bg-emerald-500", text: "text-emerald-600 dark:text-emerald-400" },
+    tight: { bar: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" },
+    over: { bar: "bg-red-500", text: "text-red-600 dark:text-red-400" },
+  } as const;
 
   const card = (
     <motion.div
@@ -134,6 +144,25 @@ export default function PocketCard({
           </motion.span>
         </div>
       </div>
+
+      {/* Monthly budget pace — only when a budget is set */}
+      {pace && (
+        <div className="relative mt-3">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min(100, pace.usedRatio * 100)}%` }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className={`h-full rounded-full ${paceColors[pace.status].bar}`}
+            />
+          </div>
+          <p
+            className={`mt-1.5 text-[11px] font-medium ${paceColors[pace.status].text}`}
+          >
+            {pace.summary}
+          </p>
+        </div>
+      )}
     </motion.div>
   );
 

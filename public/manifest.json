@@ -31,6 +31,18 @@
   ],
   "shortcuts": [
     {
+      "name": "Quick Add",
+      "short_name": "Quick Add",
+      "description": "Log an expense in one line",
+      "url": "/?quickadd=1",
+      "icons": [
+        {
+          "src": "/images/wallet-icon.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
       "name": "Add Expense",
       "short_name": "Expense",
       "description": "Quickly add a new expense",
